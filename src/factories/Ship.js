@@ -1,4 +1,4 @@
-export default function ship(name){
+export default function Ship(name){
     let length=0;
     let hitCount=0;
     let sunk=false;
@@ -42,5 +42,6 @@ export default function ship(name){
         isSunk,
         hit,
         hitCount: ()=>hitCount,
+        getLength: ()=>length,
     };
 }
