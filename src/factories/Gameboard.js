@@ -11,13 +11,14 @@ export default function GameBoard(){
                 let ship=board[x][y].ship;
                 ship.hit();
                 if(ship.isSunk()) sunkShips++;
+                return 1;
             }
             else{
                 board[x][y].hit=true;
+                return -1;
             }
-            return true;
         }
-        return false;
+        return 0;
     }
     function repeatedAttack([x,y]){
         return board[x][y].hit;
@@ -90,5 +91,5 @@ export default function GameBoard(){
         })
         return allShipHits
     }
-    return {receiveAttack,allSunk,placeShip,getFleet,getBoard,getShipHits};
+    return {receiveAttack,allSunk,placeShip,allShipsPlaced,getFleet,getBoard,getShipHits};
 }
