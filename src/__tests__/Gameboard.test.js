@@ -63,15 +63,15 @@ describe("Testing recieveAttack function",()=>{
         expect(player1.getShipHits()[3]).toBe(1);
     })
     test("Repeat attack on empty square",()=>{
-        expect(player1.receiveAttack([0,0])).toBe(true);
-        expect(player1.receiveAttack([0,0])).toBe(false);
+        expect(player1.receiveAttack([0,0])).toBe(-1);
+        expect(player1.receiveAttack([0,0])).toBe(0);
     })
     test("Attack all 5 ships once each",()=>{
-        expect(player1.receiveAttack([5,9])).toBe(true);
-        expect(player1.receiveAttack([3,5])).toBe(true);
-        expect(player1.receiveAttack([6,4])).toBe(true);
-        expect(player1.receiveAttack([0,6])).toBe(true);
-        expect(player1.receiveAttack([2,4])).toBe(true);
+        expect(player1.receiveAttack([5,9])).toBe(1);
+        expect(player1.receiveAttack([3,5])).toBe(1);
+        expect(player1.receiveAttack([6,4])).toBe(1);
+        expect(player1.receiveAttack([0,6])).toBe(1);
+        expect(player1.receiveAttack([2,4])).toBe(1);
         expect(player1.getShipHits().reduce((total,val)=>total+val,0)).toBe(5);
     })
     test("Attacking without placing all ships",()=>{
@@ -110,5 +110,20 @@ describe("Testing allSunk function",()=>{
     })
     test("Sinking no ships and using allSunk function",()=>{
         expect(player1.allSunk()).toBe(false);
+    })
+})
+
+describe("Testing getShipName function",()=>{
+    let player1;
+    beforeEach(()=>{
+        player1=GameBoard();
+        player1.placeShip('carrier',[0,0],0);
+        player1.placeShip('battleship',[1,0],0);
+        player1.placeShip('cruiser',[2,0],0);
+        player1.placeShip('submarine',[3,0],0);
+        player1.placeShip('destroyer',[4,0],0);
+    })
+    test("",()=>{
+        expect(player1.getShipName([0,3])).toBe('carrier');
     })
 })

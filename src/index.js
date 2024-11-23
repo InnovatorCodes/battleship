@@ -1,8 +1,8 @@
 import "./styles.css";
 import Player from "./factories/Player";
+import Computer from "./factories/Computer";
 
-const player1=Player('player1');
-const player2=Player('player2');
+//let mode='ai';
 
 function createBoard(name){
     const playerDiv=document.createElement('div');
@@ -16,7 +16,7 @@ function createBoard(name){
         for(let j=0;j<10;j++){
             const cell=document.createElement('div');
             cell.classList.add('cell');
-            cell.dataset.pos=`${i},${j}`;
+            cell.dataset.pos=`${i} ${j}`;
             cell.dataset.ship=null;
             boardDiv.appendChild(cell);
         }
@@ -43,27 +43,41 @@ function createBoard(name){
     return playerDiv;
 }
 
-document.querySelector('.boards').appendChild(createBoard('player1'));
-document.querySelector('.boards').appendChild(createBoard('player2'));
+let player1,player2;
 
-player1.placeShip('carrier',[5,0],1);
-player1.placeShip('battleship',[6,1],1);
-player1.placeShip('cruiser',[7,2],1);
-player1.placeShip('submarine',[7,3],1);
-player1.placeShip('destroyer',[8,4],1);
+function battleshipAI(){
+    player1=Player('player1');
+    player2=Computer();
 
-player2.placeShip('carrier',[0,0],0);
-player2.placeShip('battleship',[1,0],0);
-player2.placeShip('cruiser',[2,0],0);
-player2.placeShip('submarine',[3,0],0);
-player2.placeShip('destroyer',[4,0],0);
+    document.querySelector('.boards').appendChild(createBoard('player1'));
+    document.querySelector('.boards').appendChild(createBoard('player2'));
 
-console.log(player1.allShipsPlaced());
-console.log(player2.allShipsPlaced());
+    player1.placeShip('carrier',[5,0],1,'player1');
+    player1.placeShip('battleship',[6,1],1,'player1');
+    player1.placeShip('cruiser',[7,2],1,'player1');
+    player1.placeShip('submarine',[7,3],1,'player1');
+    player1.placeShip('destroyer',[8,4],1,'player1');
+    player2.placeShips();
+}
 
-console.log(player1.allShipsSunk());
-console.log(player2.allShipsSunk());
-
+document.addEventListener('DOMContentLoaded',()=>{
+    battleshipAI();
+    const boardPlayer2=document.querySelector('.player2 .board');
+    boardPlayer2.addEventListener('click',(event)=>{
+        let target=event.target;
+        if(target.classList.contains('cell')){
+            let x,y;
+            let pos=target.dataset.pos;
+            [x,y]=pos.split(' ');
+            player2.recordHit([parseInt(x),parseInt(y)],'player2');
+        }
+    });
+    player1.recordHit([9,0],'player1')
+    player1.recordHit([8,0],'player1')
+    player1.recordHit([7,0],'player1')
+    player1.recordHit([6,0],'player1')
+    player1.recordHit([5,0],'player1')
+});
 /*const radar=document.createElement('div');
 radar.classList.add('radar');
 const scanner=document.createElement('div');
@@ -71,4 +85,3 @@ scanner.classList.add('scanner')
 radar.appendChild(scanner);
 document.querySelector('.player2').appendChild(radar);
 */
-        

@@ -1,4 +1,4 @@
-export default function Ship(name){
+export default function Ship(name,orientation,startCoords){
     let length=0;
     let hitCount=0;
     let sunk=false;
@@ -39,6 +39,8 @@ export default function Ship(name){
 
     return {
         shipName: name,
+        orientation,
+        startCoords,
         isSunk,
         hit,
         hitCount: ()=>hitCount,

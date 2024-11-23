@@ -10,7 +10,10 @@ export default function GameBoard(){
                 board[x][y].hit=true;
                 let ship=board[x][y].ship;
                 ship.hit();
-                if(ship.isSunk()) sunkShips++;
+                if(ship.isSunk()){
+                    sunkShips++;
+                    return 2;
+                } 
                 return 1;
             }
             else{
@@ -53,7 +56,7 @@ export default function GameBoard(){
                 return false;
         }
         if(shipFleet[shipIndex]!=null) return false;
-        let newShip=new Ship(name);
+        let newShip=new Ship(name,orientation,startCoords);
         let [x,y]=startCoords;
         if(x<0 || y<0 || x>9 || y>9) return false;
         let length=newShip.getLength();
@@ -91,5 +94,19 @@ export default function GameBoard(){
         })
         return allShipHits
     }
-    return {receiveAttack,allSunk,placeShip,allShipsPlaced,getFleet,getBoard,getShipHits};
+    const getShipName=([x,y])=>board[x][y].ship.shipName;
+    const getShipOrientation=([x,y])=>board[x][y].ship.orientation;
+    const getShipStartCoords=([x,y])=>board[x][y].ship.startCoords;
+    return {
+        receiveAttack,
+        allSunk,
+        placeShip,
+        allShipsPlaced,
+        getFleet,
+        getBoard,
+        getShipHits,
+        getShipName,
+        getShipOrientation,
+        getShipStartCoords
+    };
 }
