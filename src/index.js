@@ -69,14 +69,15 @@ document.addEventListener('DOMContentLoaded',()=>{
             let x,y;
             let pos=target.dataset.pos;
             [x,y]=pos.split(' ');
-            player2.recordHit([parseInt(x),parseInt(y)],'player2');
+            let userAttack=player2.recordHit([parseInt(x),parseInt(y)],'player2');
+            if(userAttack!=0){
+                let compAttack=player2.launchAttack();
+                let attackResult=player1.recordHit(compAttack,'player1');
+                //if(attackResult==0) console.log([x,y],'repeat attack');
+                player2.logResult(compAttack,attackResult);
+            }
         }
     });
-    player1.recordHit([9,0],'player1')
-    player1.recordHit([8,0],'player1')
-    player1.recordHit([7,0],'player1')
-    player1.recordHit([6,0],'player1')
-    player1.recordHit([5,0],'player1')
 });
 /*const radar=document.createElement('div');
 radar.classList.add('radar');

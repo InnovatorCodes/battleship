@@ -57,14 +57,16 @@ export default function Computer(){
         let repeatedAttack;
         do {
             repeatedAttack=false;
-            x=Math.floor(Math.random()*11);
-            y=Math.floor(Math.random()*11);
+            x=Math.floor(Math.random()*10);
+            y=Math.floor(Math.random()*10);
             if(enemyBoard[x][y]!=0) repeatedAttack=true;
         } while (repeatedAttack);
         return [x,y];
     }
 
-    const logResult=([x,y],result)=>enemyBoard[x][y]=result;
+    const logResult=([x,y],result)=>{
+        enemyBoard[x][y]=result;
+    }
     const allShipsSunk=()=>comp.allShipsSunk();
     return {placeShips, recordHit, launchAttack,logResult,allShipsSunk}
 }

@@ -1,9 +1,9 @@
 import GameBoard from "./Gameboard";
-import carriersvg from "./../assets/carrier_ally2.svg";
-import battleshipsvg from "./../assets/battleship_ally.svg";
-import submarinesvg from "./../assets/submarine_ally.svg"
-import destroyersvg from "./../assets/destroyer_ally.svg";
-import cruisersvg from "./../assets/cruiser_ally.svg";
+import allycarrier from "./../assets/ally_ships/carrier2.svg";
+import allybattleship from "./../assets/ally_ships/battleship.svg";
+import allysubmarine from "./../assets/ally_ships/submarine.svg"
+import allydestroyer from "./../assets/ally_ships/destroyer.svg";
+import allycruiser from "./../assets/ally_ships/cruiser.svg";
 import enemycarrier from "../assets/enemy_ships/carrier2.svg";
 import enemybattleship from "../assets/enemy_ships/battleship.svg";
 import enemysubmarine from "../assets/enemy_ships/submarine.svg";
@@ -30,27 +30,27 @@ export default function Player(){
         switch (name) {
             case "carrier":
                 length=5;
-                if(type=='ally') shipsvg=carriersvg;
+                if(type=='ally') shipsvg=allycarrier;
                 else shipsvg=enemycarrier;       
                 break;
             case "battleship":
                 length=4;
-                if(type=='ally') shipsvg=battleshipsvg;
+                if(type=='ally') shipsvg=allybattleship;
                 else shipsvg=enemybattleship;
                 break;
             case "cruiser":
                 length=3;
-                if(type=='ally') shipsvg=cruisersvg;
+                if(type=='ally') shipsvg=allycruiser;
                 else shipsvg=enemycruiser;
                 break;
             case "submarine":
                 length=3;
-                if(type=='ally') shipsvg=submarinesvg;
+                if(type=='ally') shipsvg=allysubmarine;
                 else shipsvg=enemysubmarine;
                 break;
             case "destroyer":
                 length=2;
-                if(type=='ally') shipsvg=destroyersvg
+                if(type=='ally') shipsvg=allydestroyer
                 else shipsvg=enemydestroyer;
                 break;
             default:
@@ -89,11 +89,11 @@ export default function Player(){
 
     function recordHit([x,y],playerName){
         let attackResult=gameboard.receiveAttack([x,y]);
-        if(attackResult) receiveAttackUI([x,y],attackResult,playerName);
+        if(attackResult) recordHitUI([x,y],attackResult,playerName);
         return attackResult;
     }
 
-    function receiveAttackUI([x,y],attackResult,playerName){
+    function recordHitUI([x,y],attackResult,playerName){
         if(attackResult==-1){
             const miss=document.createElement('img');
             miss.src=miss_svg;
@@ -102,11 +102,11 @@ export default function Player(){
         }
         else{
             if(attackResult==2){
+                let shipName=gameboard.getShipName([x,y]);
+                let orientation=gameboard.getShipOrientation([x,y]);
+                let startCoords=gameboard.getShipStartCoords([x,y]);
+                setShipInfo(shipName,'enemy');
                 if(playerName=='player2'){
-                    let shipName=gameboard.getShipName([x,y]);
-                    let orientation=gameboard.getShipOrientation([x,y]);
-                    let startCoords=gameboard.getShipStartCoords([x,y]);
-                    setShipInfo(shipName,'enemy');
                     const enemyShip=document.createElement('img');
                     enemyShip.classList.add('shipimg');
                     enemyShip.src=shipsvg;
@@ -121,14 +121,12 @@ export default function Player(){
                     else document.querySelectorAll('.player2 .cell')[(startCoords[0])*10+startCoords[1]].appendChild(enemyShip);
                 }
                 else{
-                    let startCoords=gameboard.getShipStartCoords([x,y]);
-                    let orientation=gameboard.getShipOrientation([x,y]);
                     let shipCell;
                     if(orientation) shipCell=document.querySelectorAll('.player1 .cell')[(startCoords[0]+length-1)*10+startCoords[1]];
                     else shipCell=document.querySelectorAll('.player1 .cell')[startCoords[0]*10+startCoords[1]];
-                    shipCell.firstChild.style.animation='fadeOut 0.5s forwards';
+                    //console.log(startCoords,shipCell);
+                    shipCell.querySelector('.shipimg').style.animation='fadeOut 0.5s forwards';
                 }
-                
                 //console.log(document.querySelectorAll('.player2 .cell'))
             }
             const hit=document.createElement('img');
