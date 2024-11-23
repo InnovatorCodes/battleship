@@ -1,192 +1,200 @@
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-:root{
-    --cell-size: 6vmin;
-    --border-width: 1px;
-    --usermapcolour: 0, 86, 163;
-    --enemymapcolour: 255, 165, 0;
-    color: white;
-}
-
-body{
-    height: 100vh;
-    width: 100vw;
-    background-size: cover;
-}
-  
-.header{
-    height: 10vh;
-    font-family: "Black Ops One", system-ui;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 7vmin;
+:root {
+  --cell-size: 6vmin;
+  --border-width: 1px;
+  --usermapcolour: 0, 86, 163;
+  --enemymapcolour: 255, 165, 0;
+  color: white;
 }
 
-.maindiv{
-    width: 100%;
-    height: 100%;
-    display:  flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+body {
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
 }
 
-.boards{
-    display: flex;
-    gap: 50px;
+.header {
+  height: 10vh;
+  font-family: "Black Ops One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 7vmin;
 }
 
-.player{
-    background-color: rgba(0, 4, 53,1);
-    padding: 2rem;
-    padding-top: 3rem;
-    border-radius: 1.5rem;
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+.maindiv {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-.player1{
-    color: #87CEEB;
+.boards {
+  display: flex;
+  gap: 50px;
 }
 
-.player2{
-    color: #FFA500;
+.player {
+  background-color: rgba(0, 4, 53, 1);
+  padding: 2rem;
+  padding-top: 3rem;
+  border-radius: 1.5rem;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
-.boardInfo{
-    display: grid;
-    grid-template-columns: 0.7fr repeat(10,1fr);
-    grid-template-rows: 0.7fr repeat(10,1fr);
+.player1 {
+  color: #87ceeb;
 }
 
-.columnnames{
-    grid-column: 2 / span 10;
-    grid-row: 1 / 2;
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-template-rows: subgrid;
-    align-items: center;
-}   
-
-.rownames{
-    grid-column: 1 / 2;
-    grid-row: 2 / span 10;
-    display: grid;
-    grid-template-columns: subgrid;
-    grid-template-rows: subgrid;
-    align-items: center;
+.player2 {
+  color: #ffa500;
 }
 
-.board{
-    grid-column: 2 / span 10;
-    grid-row: 2 / span 10;
-    display: grid;
-    grid-template-columns: subgrid;
-    border-top:1px solid white;
-    border-left: 1px solid white;
-    position: relative;
+.boardInfo {
+  display: grid;
+  grid-template-columns: 0.7fr repeat(10, 1fr);
+  grid-template-rows: 0.7fr repeat(10, 1fr);
 }
 
-.boardInfo>div>div{
-    text-align: center;
+.columnnames {
+  grid-column: 2 / span 10;
+  grid-row: 1 / 2;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  align-items: center;
 }
 
-.player1 .board{
-    background: radial-gradient(rgba(var(--usermapcolour),0.15),rgba(var(--usermapcolour),0.6));
+.rownames {
+  grid-column: 1 / 2;
+  grid-row: 2 / span 10;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  align-items: center;
 }
 
-.player2 .board{
-    background: radial-gradient(rgba(var(--enemymapcolour),0.15),rgba(var(--enemymapcolour),0.6));
-    position: relative;
+.board {
+  grid-column: 2 / span 10;
+  grid-row: 2 / span 10;
+  display: grid;
+  grid-template-columns: subgrid;
+  border-top: 1px solid white;
+  border-left: 1px solid white;
+  position: relative;
+}
+
+.boardInfo > div > div {
+  text-align: center;
+}
+
+.player1 .board {
+  background: radial-gradient(
+    rgba(var(--usermapcolour), 0.15),
+    rgba(var(--usermapcolour), 0.6)
+  );
+}
+
+.player2 .board {
+  background: radial-gradient(
+    rgba(var(--enemymapcolour), 0.15),
+    rgba(var(--enemymapcolour), 0.6)
+  );
+  position: relative;
 }
 
 @keyframes scanning {
-    100% {
-      transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-  
+
 .radar {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: calc(var(--cell-size)*9.9);
-    height: calc(var(--cell-size)*9.9);
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: calc(var(--cell-size) * 9.9);
+  height: calc(var(--cell-size) * 9.9);
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0);
 }
-  
 
 .scanner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(var(--cell-size)*5*1.5);
-    height: calc(var(--cell-size)*5*1.5);
-    background-image: linear-gradient(to top right, #00ff00 0%, rgba(0, 0, 0, 0) 50%);
-    transform-origin: top left;
-    animation: scanning 6s infinite linear;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--cell-size) * 5 * 1.5);
+  height: calc(var(--cell-size) * 5 * 1.5);
+  background-image: linear-gradient(
+    to top right,
+    #00ff00 0%,
+    rgba(0, 0, 0, 0) 50%
+  );
+  transform-origin: top left;
+  animation: scanning 6s infinite linear;
 }
 
-
-.cell{
-    border-right: var(--border-width) solid white;
-    border-bottom: var(--border-width) solid white;
-    width: var(--cell-size);
-    height: var(--cell-size);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.cell {
+  border-right: var(--border-width) solid white;
+  border-bottom: var(--border-width) solid white;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 @keyframes opacitykf {
-    0% {
-        opacity: 0.9;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        opacity: 0.9;
-    }
+  0% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.9;
+  }
 }
 
 @keyframes fadeIn {
-    0%{
-        opacity: 0;
-    }
-    100%{
-        opacity: 1;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-    0%{
-        opacity: initial;
-    }
-    100%{
-        opacity: 0.5;
-    }
+  0% {
+    opacity: initial;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
 
-.shipimg{
-    position: absolute;
-    align-self: stretch;
-    z-index: 2;
-    height: var(--cell-size);
-    animation: opacitykf 4s infinite;
+.shipimg {
+  position: absolute;
+  align-self: stretch;
+  z-index: 2;
+  height: var(--cell-size);
+  animation: opacitykf 4s infinite;
 }
 
-.hit{
-    position: absolute;
-    z-index: 3;
-    width: calc(0.6*var(--cell-size));
+.hit {
+  position: absolute;
+  z-index: 3;
+  width: calc(0.6 * var(--cell-size));
 }
