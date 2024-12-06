@@ -2,8 +2,6 @@ import "./styles.css";
 import Player from "./factories/Player";
 import Computer from "./factories/Computer";
 
-//let mode='ai';
-
 function createBoard(name) {
   const playerDiv = document.createElement("div");
   playerDiv.classList.add("player");
@@ -44,49 +42,54 @@ function createBoard(name) {
 }
 
 let player1, player2;
+let mode = "pvp";
+let turn = 0;
 
 function battleshipAI() {
-  player1 = Player("player1");
+  player1 = Player();
   player2 = Computer();
 
   document.querySelector(".boards").appendChild(createBoard("player1"));
   document.querySelector(".boards").appendChild(createBoard("player2"));
 
-  player1.placeShip("carrier", [5, 0], 1, "player1");
-  player1.placeShip("battleship", [6, 1], 1, "player1");
-  player1.placeShip("cruiser", [7, 2], 1, "player1");
-  player1.placeShip("submarine", [7, 3], 1, "player1");
-  player1.placeShip("destroyer", [8, 4], 1, "player1");
+  player1.placeShip("carrier", [5, 0], 1, "ally");
+  player1.placeShip("battleship", [6, 1], 1, "ally");
+  player1.placeShip("cruiser", [7, 2], 1, "ally");
+  player1.placeShip("submarine", [7, 3], 1, "ally");
+  player1.placeShip("destroyer", [8, 4], 1, "ally");
   player2.placeShips();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  battleshipAI();
-  const boardPlayer2 = document.querySelector(".player2 .board");
-  boardPlayer2.addEventListener("click", handleUserClick);
+  if (mode == "ai") {
+    battleshipAI();
+    const boardPlayer2 = document.querySelector(".player2 .board");
+    boardPlayer2.addEventListener("click", handleUserClickAI);
+  } else {
+    battleshipPvP();
+    const boardPlayer2 = document.querySelector(".player2 .board");
+    boardPlayer2.addEventListener("click", handleUserClickPVP);
+  }
 });
 
-function handleUserClick(event) {
+function handleUserClickAI(event) {
   const boardPlayer2 = document.querySelector(".player2 .board");
   let target = event.target;
   if (target.classList.contains("cell")) {
     let x, y;
     let pos = target.dataset.pos;
     [x, y] = pos.split(" ");
-    let userAttackRes = player2.recordHit(
-      [parseInt(x), parseInt(y)],
-      "player2",
-    );
+    let userAttackRes = player2.recordHit([parseInt(x), parseInt(y)], "enemy");
     if (player2.allShipsSunk()) {
-      boardPlayer2.removeEventListener("click", handleUserClick);
+      boardPlayer2.removeEventListener("click", handleUserClickAI);
       console.log("You Won");
       return;
     }
     if (userAttackRes != 0) {
       let compAttack = player2.launchAttack();
-      let compAttackRes = player1.recordHit(compAttack, "player1");
+      let compAttackRes = player1.recordHit(compAttack, "user");
       if (player1.allShipsSunk()) {
-        boardPlayer2.removeEventListener("click", handleUserClick);
+        boardPlayer2.removeEventListener("click", handleUserClickAI);
         console.log("Oops! Computer Won");
         return;
       }
@@ -95,6 +98,60 @@ function handleUserClick(event) {
     }
   }
 }
+
+function battleshipPvP() {
+  player1 = Player();
+  player2 = Player();
+
+  document.querySelector(".boards").appendChild(createBoard("player1"));
+  document.querySelector(".boards").appendChild(createBoard("player2"));
+
+  player1.placeShip("carrier", [5, 0], 1, "ally");
+  player1.placeShip("battleship", [6, 1], 1, "ally");
+  player1.placeShip("cruiser", [7, 2], 1, "ally");
+  player1.placeShip("submarine", [7, 3], 1, "ally");
+  player1.placeShip("destroyer", [8, 4], 1, "ally");
+  player2.placeShip("carrier", [5, 0], 1, "enemy");
+  player2.placeShip("battleship", [6, 1], 1, "enemy");
+  player2.placeShip("cruiser", [7, 2], 1, "enemy");
+  player2.placeShip("submarine", [7, 3], 1, "enemy");
+  player2.placeShip("destroyer", [8, 4], 1, "enemy");
+}
+
+function handleUserClickPVP(event) {
+  const boardPlayer2 = document.querySelector(".player2 .board");
+  let target = event.target;
+  let currentPlayer, currentOpponent;
+  if (turn == 0) {
+    currentPlayer = player1;
+    currentOpponent = player2;
+  } else {
+    currentPlayer = player2;
+    currentOpponent = player1;
+  }
+  if (target.classList.contains("cell")) {
+    let x, y;
+    let pos = target.dataset.pos;
+    [x, y] = pos.split(" ");
+    let playerAttackRes;
+    playerAttackRes = currentOpponent.recordHit(
+      [parseInt(x), parseInt(y)],
+      "enemy",
+    );
+    if (currentOpponent.allShipsSunk()) {
+      boardPlayer2.removeEventListener("click", handleUserClickAI);
+      console.log("Player 1 Won");
+      return;
+    }
+    if (playerAttackRes != 0) {
+      currentOpponent.renderBoard("user");
+      currentPlayer.renderBoard("enemy");
+      if (turn == 0) turn++;
+      else turn--;
+    }
+  }
+}
+
 /*const radar=document.createElement('div');
 radar.classList.add('radar');
 const scanner=document.createElement('div');

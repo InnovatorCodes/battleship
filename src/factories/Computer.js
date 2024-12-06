@@ -65,8 +65,8 @@ export default function Computer() {
     }
   }
 
-  function recordHit([x, y], playerName) {
-    return comp.recordHit([x, y], playerName);
+  function recordHit([x, y], perspective) {
+    return comp.recordHit([x, y], perspective);
   }
 
   function launchAttack() {

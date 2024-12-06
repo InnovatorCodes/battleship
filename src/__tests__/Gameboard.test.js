@@ -31,9 +31,7 @@ describe("Testing placeShip function", () => {
   test("Testing placing a ship on an occupied position", () => {
     player1.placeShip("battleship", [4, 5], 1);
     expect(player1.placeShip("cruiser", [5, 5], 0)).toBe(false);
-    expect(
-      player1.getBoard()[5].filter((value) => value.ship == null).length,
-    ).toBe(9);
+    expect(player1.getFleet()[2]).toBe(null);
   });
 });
 

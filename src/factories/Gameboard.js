@@ -1,5 +1,5 @@
 import Ship from "./Ship";
-
+import { recordHitUI, renderMap, placeShipUI } from "./GameboardUI";
 export default function GameBoard() {
   const board = Array(10)
     .fill()
@@ -9,22 +9,26 @@ export default function GameBoard() {
         .map(() => ({ ship: null, hit: false })),
     );
   const shipFleet = Array(5).fill(null);
-  let sunkShips = 0;
-  function receiveAttack([x, y]) {
+  let sunkShips = 0,
+    ship;
+  function receiveAttack([x, y], perspective) {
     if (!repeatedAttack([x, y]) && allShipsPlaced()) {
+      let attackResult = 0;
       if (shipPresent([x, y]) && !board[x][y].ship.isSunk()) {
         board[x][y].hit = true;
-        let ship = board[x][y].ship;
+        ship = board[x][y].ship;
         ship.hit();
+        attackResult = 1;
         if (ship.isSunk()) {
           sunkShips++;
-          return 2;
+          attackResult = 2;
         }
-        return 1;
       } else {
         board[x][y].hit = true;
-        return -1;
+        attackResult = -1;
       }
+      recordHitUI([x, y], attackResult, perspective, ship);
+      return attackResult;
     }
     return 0;
   }
@@ -39,7 +43,7 @@ export default function GameBoard() {
   }
 
   const allSunk = () => sunkShips == 5;
-  const placeShip = (name, startCoords, orientation) => {
+  const placeShip = (name, startCoords, orientation, perspective) => {
     let shipIndex;
     switch (name) {
       case "carrier":
@@ -85,11 +89,11 @@ export default function GameBoard() {
       }
     }
     shipFleet[shipIndex] = newShip;
+    if (perspective == "ally") placeShipUI(newShip);
     return true;
   };
 
   const getFleet = () => shipFleet;
-  const getBoard = () => board;
   const getShipHits = () => {
     let allShipHits = [];
     shipFleet.forEach((ship) => {
@@ -101,16 +105,17 @@ export default function GameBoard() {
   const getShipName = ([x, y]) => board[x][y].ship.shipName;
   const getShipOrientation = ([x, y]) => board[x][y].ship.orientation;
   const getShipStartCoords = ([x, y]) => board[x][y].ship.startCoords;
+  const renderBoard = (perspective) => renderMap(perspective, shipFleet, board);
   return {
     receiveAttack,
     allSunk,
     placeShip,
     allShipsPlaced,
     getFleet,
-    getBoard,
     getShipHits,
     getShipName,
     getShipOrientation,
     getShipStartCoords,
+    renderBoard,
   };
 }
