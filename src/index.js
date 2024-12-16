@@ -1,11 +1,92 @@
+import allycarrier from "./assets/ally_ships/carrier2.svg"
+import allycruiser from "./assets/ally_ships/cruiser.svg";
+import allybattleship from "./assets/ally_ships/battleship.svg";
+import allysubmarine from "./assets/ally_ships/submarine3.svg";
+import allydestroyer from "./assets/ally_ships/destroyer.svg";
 import "./styles.css";
-import Player from "./factories/Player";
-import Computer from "./factories/Computer";
 
-function createBoard(name) {
+function fleetSetup(){
+  document.querySelector(".maindiv").appendChild(createSetupBoard());
+}
+const shipSVGs=[allycarrier,allybattleship,allycruiser,allysubmarine,allydestroyer];
+const shipNames=["CARRIER","BATTLESHIP","CRUISER","SUBMARINE","DESTROYER"];
+//let length, shipsvg;
+const shipLengths=[5,4,3,3,2];
+
+/*function setShipSVG(shipName){
+  switch (shipName) {
+    case "carrier":
+      shipimg=carriersvg;
+      break;
+    case "battleship":
+      shipimg=battleshipsvg;
+      break;
+    case "cruiser":
+      shipimg=cruisersvg;
+      break;
+    case "submarine":
+      shipimg=submarinesvg;
+      break;
+    case "destroyer":
+      shipimg=destroyersvg;
+      break;
+    default:
+      break;
+  }
+}*/
+
+let orientation,length;
+let shipsvg;
+let currentDragCells = [];
+
+function clearHighlightCells() {
+  currentDragCells.forEach(cell => {
+    cell.classList.remove('dragover');
+    cell.classList.remove('invalid');
+  });
+  currentDragCells = []; // Reset the list
+}
+
+function addHighlightCells(x, y, length, orientation) {
+  clearHighlightCells(); // Clear any existing highlights first
+
+  if (orientation) { // Vertical placement
+    let i;
+    for (i = 0; i < length; i++) {
+      if (x + i < 10) {
+        const cell = document.querySelectorAll('.cell')[(x + i) * 10 + y];
+        if (cell) {
+          cell.classList.add('dragover');
+          currentDragCells.push(cell); // Track the highlighted cell
+        }
+      }
+      else break;
+    }
+    if(i<length){
+      for(let j=0;j<i;j++) document.querySelectorAll('.cell')[(x + i) * 10 + y].classList.add('invalid');
+    }
+  } else { // Horizontal placement
+    let i;
+    for (i = 0; i < length; i++) {
+      if (y + i < 10) {
+        const cell = document.querySelectorAll('.cell')[x * 10 + y + i];
+        if (cell) {
+          cell.classList.add('dragover');
+          currentDragCells.push(cell); // Track the highlighted cell
+        }
+      }
+      else break
+    }
+    if(i<length){
+      for(let j=0;j<i;j++) document.querySelectorAll('.cell')[x * 10 + y+j].classList.add('invalid');
+    }
+  }
+}
+
+function createSetupBoard(){
   const playerDiv = document.createElement("div");
   playerDiv.classList.add("player");
-  playerDiv.classList.add(name);
+  playerDiv.classList.add("setup");
   const boardInfo = document.createElement("div");
   boardInfo.classList.add("boardInfo");
   const boardDiv = document.createElement("div");
@@ -15,9 +96,34 @@ function createBoard(name) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.dataset.pos = `${i} ${j}`;
-      cell.dataset.ship = null;
+      cell.addEventListener('dragover',(event)=>{
+        event.preventDefault()
+      })
+      cell.addEventListener('dragenter',(event)=>{
+        const dragTarget = event.target;
+        if (dragTarget.classList.contains('cell')) {
+          const [x, y] = dragTarget.dataset.pos.split(' ').map(Number);
+          addHighlightCells(x, y, length, orientation); // Highlight the appropriate cells
+        }
+      });
+      cell.addEventListener('drop',(event)=>{
+        const targetCell=event.target;
+        if(targetCell.classList.contains('cell')) {
+          let startCoords=targetCell.dataset.pos.split(' ').map(Number);
+          if(!targetCell.classList.contains('invalid')){
+            placeShipUI(event.dataTransfer.getData("text"),startCoords,orientation)
+          }
+        }
+        clearHighlightCells();
+      })
       boardDiv.appendChild(cell);
     }
+    boardDiv.addEventListener('dragleave',(event)=>{
+      if (!boardDiv.contains(event.relatedTarget)) {
+        clearHighlightCells();
+        // Handle logic for leaving the board
+      }
+    })
   }
   boardInfo.appendChild(boardDiv);
   const columnNames = document.createElement("div");
@@ -36,121 +142,115 @@ function createBoard(name) {
   }
   const title = document.createElement("h1");
   boardInfo.append(columnNames, rowNames);
-  title.textContent = name == "player1" ? "ALLY WATERS" : "ENEMY WATERS";
-  playerDiv.append(title, boardInfo);
+  title.textContent = "DEPLOY YOUR FLEET"
+  const fleet=document.createElement('div');
+  for(let i=0;i<5;i++){
+    const shipDiv=document.createElement('div');
+    shipDiv.draggable=true;
+    shipDiv.classList.add('shipdiv');
+    const shipImg=document.createElement('img');
+    shipImg.classList.add('shipimg');
+    const shipName=document.createElement('div');
+    shipName.classList.add('shipname');
+    shipImg.src=shipSVGs[i];
+    shipName.textContent=shipNames[i];
+    shipDiv.append(shipImg,shipName);
+    shipDiv.dataset.name=shipNames[i].toLowerCase();
+    shipDiv.dataset.length=shipLengths[i];
+    shipDiv.dataset.orientation=0;
+    fleet.appendChild(shipDiv);
+    shipDiv.addEventListener('dragstart',(event)=>{
+      const draggableElement=event.target;
+      const rect = draggableElement.getBoundingClientRect();
+      const dragImage = draggableElement.cloneNode(true);
+
+      // Apply the same styles to the drag image
+      dragImage.style.position = 'absolute';
+      dragImage.style.top = '-9999px'; // Hide it offscreen
+      dragImage.style.width=`${rect.width}px`;
+      document.querySelector(".fleet").appendChild(dragImage);
+  
+      // Set the custom drag image
+      event.dataTransfer.setDragImage(dragImage, 0.8*rect.width, 50); // Offset for the cursor position
+      event.dataTransfer.setData("text",draggableElement.dataset.name);
+
+      length=parseInt(draggableElement.dataset.length);
+      orientation=parseInt(draggableElement.dataset.orientation);
+
+      // Clean up after the drag ends
+      draggableElement.addEventListener('dragend', () => {
+        dragImage.remove();
+      });
+    })
+  } 
+  fleet.classList.add('fleet');
+  playerDiv.append(title, boardInfo,fleet);
   return playerDiv;
+
 }
 
-let player1, player2;
-let mode = "pvp";
-let turn = 0;
+fleetSetup()
 
-function battleshipAI() {
-  player1 = Player();
-  player2 = Computer();
-
-  document.querySelector(".boards").appendChild(createBoard("player1"));
-  document.querySelector(".boards").appendChild(createBoard("player2"));
-
-  player1.placeShip("carrier", [5, 0], 1, "ally");
-  player1.placeShip("battleship", [6, 1], 1, "ally");
-  player1.placeShip("cruiser", [7, 2], 1, "ally");
-  player1.placeShip("submarine", [7, 3], 1, "ally");
-  player1.placeShip("destroyer", [8, 4], 1, "ally");
-  player2.placeShips();
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (mode == "ai") {
-    battleshipAI();
-    const boardPlayer2 = document.querySelector(".player2 .board");
-    boardPlayer2.addEventListener("click", handleUserClickAI);
+function placeShipUI(name,startCoords,orientation) {
+  setShipInfo(name);
+  const boardDiv = document.querySelector(`.board`);
+  const shipImg = document.createElement("img");
+  shipImg.src = shipsvg;
+  shipImg.classList.add("shipimg");
+  shipImg.style.width = `calc(var(--cell-size)*${length})`;
+  if (orientation) {
+    //shipImg.style.top=`calc(var(--cell-size)*${startCoords[0]})`
+            //shipImg.style.left=`calc(var(--cell-size)*${startCoords[1]-length+1})`;
+    shipImg.style.transform = "rotate(270deg)";
+    shipImg.style.transformOrigin = `${(1 / (2 * length)) * 100}% 50%`;
+    if (name == "submarine") shipImg.style.height = `var(--cell-size)*0.8`;
+    boardDiv
+      .querySelectorAll(".cell")
+      [
+        (startCoords[0] + length - 1) * 10 + startCoords[1]
+      ].appendChild(shipImg);
+    //player.querySelector('.board').appendChild(shipImg);
+    for (let i = 0; i < length; i++)
+      boardDiv.querySelectorAll(".cell")[
+        (startCoords[0] + i) * 10 + startCoords[1]
+      ].dataset.ship = name;
   } else {
-    battleshipPvP();
-    const boardPlayer2 = document.querySelector(".player2 .board");
-    boardPlayer2.addEventListener("click", handleUserClickPVP);
-  }
-});
-
-function handleUserClickAI(event) {
-  const boardPlayer2 = document.querySelector(".player2 .board");
-  let target = event.target;
-  if (target.classList.contains("cell")) {
-    let x, y;
-    let pos = target.dataset.pos;
-    [x, y] = pos.split(" ");
-    let userAttackRes = player2.recordHit([parseInt(x), parseInt(y)], "enemy");
-    if (player2.allShipsSunk()) {
-      boardPlayer2.removeEventListener("click", handleUserClickAI);
-      console.log("You Won");
-      return;
-    }
-    if (userAttackRes != 0) {
-      let compAttack = player2.launchAttack();
-      let compAttackRes = player1.recordHit(compAttack, "user");
-      if (player1.allShipsSunk()) {
-        boardPlayer2.removeEventListener("click", handleUserClickAI);
-        console.log("Oops! Computer Won");
-        return;
-      }
-      //if(attackResult==0) console.log([x,y],'repeat attack');
-      player2.logResult(compAttack, compAttackRes);
-    }
+    //shipImg.style.top=`calc(var(--cell-size)*${startCoords[0]})`
+            //shipImg.style.left=`calc(var(--cell-size)*${startCoords[1]})`;
+    //player.querySelector('.board').appendChild(shipImg);
+    boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]].appendChild(shipImg);
   }
 }
 
-function battleshipPvP() {
-  player1 = Player();
-  player2 = Player();
-
-  document.querySelector(".boards").appendChild(createBoard("player1"));
-  document.querySelector(".boards").appendChild(createBoard("player2"));
-
-  player1.placeShip("carrier", [5, 0], 1, "ally");
-  player1.placeShip("battleship", [6, 1], 1, "ally");
-  player1.placeShip("cruiser", [7, 2], 1, "ally");
-  player1.placeShip("submarine", [7, 3], 1, "ally");
-  player1.placeShip("destroyer", [8, 4], 1, "ally");
-  player2.placeShip("carrier", [5, 0], 1, "enemy");
-  player2.placeShip("battleship", [6, 1], 1, "enemy");
-  player2.placeShip("cruiser", [7, 2], 1, "enemy");
-  player2.placeShip("submarine", [7, 3], 1, "enemy");
-  player2.placeShip("destroyer", [8, 4], 1, "enemy");
-}
-
-function handleUserClickPVP(event) {
-  const boardPlayer2 = document.querySelector(".player2 .board");
-  let target = event.target;
-  let currentPlayer, currentOpponent;
-  if (turn == 0) {
-    currentPlayer = player1;
-    currentOpponent = player2;
-  } else {
-    currentPlayer = player2;
-    currentOpponent = player1;
-  }
-  if (target.classList.contains("cell")) {
-    let x, y;
-    let pos = target.dataset.pos;
-    [x, y] = pos.split(" ");
-    let playerAttackRes;
-    playerAttackRes = currentOpponent.recordHit(
-      [parseInt(x), parseInt(y)],
-      "enemy",
-    );
-    if (currentOpponent.allShipsSunk()) {
-      boardPlayer2.removeEventListener("click", handleUserClickAI);
-      console.log("Player 1 Won");
-      return;
-    }
-    if (playerAttackRes != 0) {
-      currentOpponent.renderBoard("user");
-      currentPlayer.renderBoard("enemy");
-      if (turn == 0) turn++;
-      else turn--;
-    }
+function setShipInfo(name) {
+  switch (name) {
+    case "carrier":
+      length = 5;
+      shipsvg = allycarrier;
+      break;
+    case "battleship":
+      length = 4;
+      shipsvg = allybattleship;
+      break;
+    case "cruiser":
+      length = 3;
+      shipsvg = allycruiser;
+      break;
+    case "submarine":
+      length = 3;
+      shipsvg = allysubmarine;
+      break;
+    case "destroyer":
+      length = 2;
+      shipsvg = allydestroyer;
+      break;
+    default:
+      break;
   }
 }
+
+
+
 
 /*const radar=document.createElement('div');
 radar.classList.add('radar');

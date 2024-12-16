@@ -1,15 +1,15 @@
-import allycarrier from "./../assets/ally_ships/carrier2.svg";
-import allybattleship from "./../assets/ally_ships/battleship.svg";
-import allysubmarine from "./../assets/ally_ships/submarine.svg";
-import allydestroyer from "./../assets/ally_ships/destroyer.svg";
-import allycruiser from "./../assets/ally_ships/cruiser.svg";
-import enemycarrier from "../assets/enemy_ships/carrier2.svg";
-import enemybattleship from "../assets/enemy_ships/battleship.svg";
-import enemysubmarine from "../assets/enemy_ships/submarine.svg";
-import enemycruiser from "../assets/enemy_ships/cruiser.svg";
-import enemydestroyer from "../assets/enemy_ships/destroyer.svg";
-import miss_svg from "./../assets/miss.svg";
-import hit_svg from "./../assets/hit.svg";
+import allycarrier from "./assets/ally_ships/carrier2.svg";
+import allybattleship from "./assets/ally_ships/battleship.svg";
+import allysubmarine from "./assets/ally_ships/submarine.svg";
+import allydestroyer from "./assets/ally_ships/destroyer.svg";
+import allycruiser from "./assets/ally_ships/cruiser.svg";
+import enemycarrier from "./assets/enemy_ships/carrier2.svg";
+import enemybattleship from "./assets/enemy_ships/battleship.svg";
+import enemysubmarine from "./assets/enemy_ships/submarine.svg";
+import enemycruiser from "./assets/enemy_ships/cruiser.svg";
+import enemydestroyer from "./assets/enemy_ships/destroyer.svg";
+import miss_svg from "./assets/miss.svg";
+import hit_svg from "./assets/hit.svg";
 
 let length, shipsvg;
 function setShipInfo(name, type) {
@@ -45,7 +45,6 @@ function setShipInfo(name, type) {
 }
 
 function recordHitUI([x, y], attackResult, perspective, ship) {
-  console.log(attackResult);
   let boardName = perspective == "enemy" ? "player2" : "player1";
   if (attackResult == -1) {
     const miss = document.createElement("img");
@@ -218,10 +217,6 @@ function placeShipUI(ship) {
     }
     //player.querySelector('.board').appendChild(shipImg);
     player.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]];
-    for (let i = 0; i < length; i++)
-      player.querySelectorAll(".cell")[
-        startCoords[0] * 10 + startCoords[1] + i
-      ].dataset.ship = name;
   }
 }
 
