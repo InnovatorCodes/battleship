@@ -1,5 +1,5 @@
 import Ship from "./Ship";
-import { recordHitUI, renderMap, placeShipUI } from "../GameboardUI";
+import { recordHitUI, renderMap } from "../GameboardUI";
 export default function GameBoard() {
   const board = Array(10)
     .fill()
@@ -43,7 +43,7 @@ export default function GameBoard() {
   }
 
   const allSunk = () => sunkShips == 5;
-  const placeShip = (name, startCoords, orientation, perspective) => {
+  const placeShip = (name, startCoords, orientation) => {
     let shipIndex;
     switch (name) {
       case "carrier":
@@ -89,7 +89,6 @@ export default function GameBoard() {
       }
     }
     shipFleet[shipIndex] = newShip;
-    if (perspective == "ally") placeShipUI(newShip);
     return true;
   };
 

@@ -73,7 +73,7 @@ body {
 
 .setup .fleet{
   margin-left: 1rem;
-  grid-row: 2/span 1;
+  grid-row: 1/span 2;
   grid-column: 2/span 1;
   display: flex;
   flex-direction: column;
@@ -81,15 +81,32 @@ body {
   gap: 2rem;
 }
 
-.fleet .shipdiv{
+.orientation{
+  background-color: white;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  gap: 1rem;
+  color:black;
+  justify-content: center;
+}
+
+.orientation img{
+  width: 2rem;
+}
+
+.shipdiv{
   align-items: center;
   display: flex;
   flex-direction: column;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 0.5rem;
   border-radius: 1rem;
-  border: 2px solid white;
+  outline: 2px solid white;
 }
+
 
 .fleet .shipimg{
   height: var(--cell-size);

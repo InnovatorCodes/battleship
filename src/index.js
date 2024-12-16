@@ -3,37 +3,21 @@ import allycruiser from "./assets/ally_ships/cruiser.svg";
 import allybattleship from "./assets/ally_ships/battleship.svg";
 import allysubmarine from "./assets/ally_ships/submarine3.svg";
 import allydestroyer from "./assets/ally_ships/destroyer.svg";
+import verticalsvg from "./assets/vertical.svg";
+import horizontalsvg from "./assets/horizontal.svg";
 import "./styles.css";
+import Player from "./factories/Player";
+
+const player1=Player();
 
 function fleetSetup(){
   document.querySelector(".maindiv").appendChild(createSetupBoard());
 }
+
 const shipSVGs=[allycarrier,allybattleship,allycruiser,allysubmarine,allydestroyer];
 const shipNames=["CARRIER","BATTLESHIP","CRUISER","SUBMARINE","DESTROYER"];
 //let length, shipsvg;
 const shipLengths=[5,4,3,3,2];
-
-/*function setShipSVG(shipName){
-  switch (shipName) {
-    case "carrier":
-      shipimg=carriersvg;
-      break;
-    case "battleship":
-      shipimg=battleshipsvg;
-      break;
-    case "cruiser":
-      shipimg=cruisersvg;
-      break;
-    case "submarine":
-      shipimg=submarinesvg;
-      break;
-    case "destroyer":
-      shipimg=destroyersvg;
-      break;
-    default:
-      break;
-  }
-}*/
 
 let orientation,length;
 let shipsvg;
@@ -110,8 +94,17 @@ function createSetupBoard(){
         const targetCell=event.target;
         if(targetCell.classList.contains('cell')) {
           let startCoords=targetCell.dataset.pos.split(' ').map(Number);
+          let name=event.dataTransfer.getData("text");
           if(!targetCell.classList.contains('invalid')){
-            placeShipUI(event.dataTransfer.getData("text"),startCoords,orientation)
+            placeShipUI(name,startCoords,orientation);
+            let draggableEementIndex=shipNames.indexOf(name.toUpperCase());
+            const draggableElement=document.querySelectorAll('.shipdiv')[draggableEementIndex];
+            const rect=draggableElement.getBoundingClientRect();
+            draggableElement.style.width=`${rect.width}px`;
+            draggableElement.style.height=`${rect.height}px`;
+            while(draggableElement.hasChildNodes()) draggableElement.removeChild(draggableElement.firstChild);
+            draggableElement.draggable=false;
+            player1.placeShip(name,startCoords,orientation);
           }
         }
         clearHighlightCells();
@@ -144,6 +137,29 @@ function createSetupBoard(){
   boardInfo.append(columnNames, rowNames);
   title.textContent = "DEPLOY YOUR FLEET"
   const fleet=document.createElement('div');
+  const orientationbtn=document.createElement('div')
+  orientationbtn.classList.add('orientation');
+  const orientationImg=document.createElement('img');
+  orientationImg.src=horizontalsvg;
+  const orientationName=document.createElement('div');
+  orientationName.textContent='HORIZONTAL';
+  orientationbtn.append(orientationImg,orientationName);
+  orientationbtn.addEventListener('click',()=>{
+    orientationbtn.removeChild(orientationbtn.firstChild)
+    const newImg=document.createElement('img');
+    if(orientationName.textContent=='VERTICAL'){
+      newImg.src=horizontalsvg;
+      orientationName.textContent='HORIZONTAL';
+      orientation=0;
+    } 
+    else{
+      newImg.src=verticalsvg;
+      orientationName.textContent='VERTICAL';
+      orientation=1;
+    } 
+    orientationbtn.insertBefore(newImg,orientationbtn.childNodes[0]);
+  })
+  fleet.appendChild(orientationbtn);
   for(let i=0;i<5;i++){
     const shipDiv=document.createElement('div');
     shipDiv.draggable=true;
@@ -157,7 +173,6 @@ function createSetupBoard(){
     shipDiv.append(shipImg,shipName);
     shipDiv.dataset.name=shipNames[i].toLowerCase();
     shipDiv.dataset.length=shipLengths[i];
-    shipDiv.dataset.orientation=0;
     fleet.appendChild(shipDiv);
     shipDiv.addEventListener('dragstart',(event)=>{
       const draggableElement=event.target;
@@ -168,6 +183,8 @@ function createSetupBoard(){
       dragImage.style.position = 'absolute';
       dragImage.style.top = '-9999px'; // Hide it offscreen
       dragImage.style.width=`${rect.width}px`;
+      dragImage.style.border='2px solid white';
+      dragImage.style.outline='none';
       document.querySelector(".fleet").appendChild(dragImage);
   
       // Set the custom drag image
@@ -175,7 +192,6 @@ function createSetupBoard(){
       event.dataTransfer.setData("text",draggableElement.dataset.name);
 
       length=parseInt(draggableElement.dataset.length);
-      orientation=parseInt(draggableElement.dataset.orientation);
 
       // Clean up after the drag ends
       draggableElement.addEventListener('dragend', () => {
