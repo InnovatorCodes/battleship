@@ -39,43 +39,40 @@ function createBoard(name) {
     return playerDiv;
   }
  
-function startGame(){
+function startGame(mode,player1_ships,player2_ships){
   const battlePage=document.createElement('div');
   battlePage.classList.add('battlePage');
   const boards=document.createElement("div");
-  boards.classList.append('boards');
+  boards.classList.add('boards');
   battlePage.appendChild(boards);
-  document.querySelector(".maindiv").appendChild(battlePage);
+  document.querySelector('.maindiv').appendChild(battlePage)
   let player1, player2;
-  let mode = "ai";
   let turn = 0;
+
+  if (mode == "ai") {
+    battleshipAI(player1_ships);
+    const boardPlayer2 = document.querySelector(".player2 .board");
+    boardPlayer2.addEventListener("click", handleUserClickAI);
+  } else {
+    battleshipPvP(player1_ships,player2_ships);
+    const boardPlayer2 = document.querySelector(".player2 .board");
+    boardPlayer2.addEventListener("click", handleUserClickPVP);
+  }
   
-  function battleshipAI() {
+  function battleshipAI(player1_ships) {
     player1 = Player();
     player2 = Computer();
   
-    document.querySelector(".boards").appendChild(createBoard("player1"));
-    document.querySelector(".boards").appendChild(createBoard("player2"));
+    document.querySelector('.boards').appendChild(createBoard("player1"));
+    document.querySelector('.boards').appendChild(createBoard("player2"));
   
-    player1.placeShip("carrier", [5, 0], 1, "ally");
-    player1.placeShip("battleship", [6, 1], 1, "ally");
-    player1.placeShip("cruiser", [7, 2], 1, "ally");
-    player1.placeShip("submarine", [7, 3], 1, "ally");
-    player1.placeShip("destroyer", [8, 4], 1, "ally");
+    player1_ships.forEach(([name,startcoords,orientation])=>player1.placeShip(name,startcoords,orientation))
     player2.placeShips();
+    console.log(player2.getFleet());
+    player1.renderBoard('user');
+    player2.renderBoard('enemy');
   }
-  
-  document.addEventListener("DOMContentLoaded", () => {
-    if (mode == "ai") {
-      battleshipAI();
-      const boardPlayer2 = document.querySelector(".player2 .board");
-      boardPlayer2.addEventListener("click", handleUserClickAI);
-    } else {
-      battleshipPvP();
-      const boardPlayer2 = document.querySelector(".player2 .board");
-      boardPlayer2.addEventListener("click", handleUserClickPVP);
-    }
-  });
+
   
   function handleUserClickAI(event) {
     const boardPlayer2 = document.querySelector(".player2 .board");
@@ -104,23 +101,17 @@ function startGame(){
     }
   }
   
-  function battleshipPvP() {
+  function battleshipPvP(player1_ships,player2_ships) {
     player1 = Player();
     player2 = Player();
   
-    document.querySelector(".boards").appendChild(createBoard("player1"));
-    document.querySelector(".boards").appendChild(createBoard("player2"));
+    boards.appendChild(createBoard("player1"));
+    boards.appendChild(createBoard("player2"));
   
-    player1.placeShip("carrier", [5, 0], 1, "ally");
-    player1.placeShip("battleship", [6, 1], 1, "ally");
-    player1.placeShip("cruiser", [7, 2], 1, "ally");
-    player1.placeShip("submarine", [7, 3], 1, "ally");
-    player1.placeShip("destroyer", [8, 4], 1, "ally");
-    player2.placeShip("carrier", [5, 0], 1, "enemy");
-    player2.placeShip("battleship", [6, 1], 1, "enemy");
-    player2.placeShip("cruiser", [7, 2], 1, "enemy");
-    player2.placeShip("submarine", [7, 3], 1, "enemy");
-    player2.placeShip("destroyer", [8, 4], 1, "enemy");
+    player1_ships.forEach(([name,startcoords,orientation])=>player1.placeShip(name,startcoords,orientation))
+    player2_ships.forEach(([name,startcoords,orientation])=>player2.placeShip(name,startcoords,orientation))
+    player1.renderBoard('user');
+    player2.renderBoard('enemy');
   }
   
   function handleUserClickPVP(event) {
@@ -144,7 +135,7 @@ function startGame(){
         "enemy",
       );
       if (currentOpponent.allShipsSunk()) {
-        boardPlayer2.removeEventListener("click", handleUserClickAI);
+        boardPlayer2.removeEventListener("click", handleUserClickPVP);
         console.log("Player 1 Won");
         return;
       }

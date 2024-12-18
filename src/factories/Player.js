@@ -2,8 +2,8 @@ import GameBoard from "./Gameboard";
 
 export default function Player() {
   let gameboard = GameBoard();
-  function placeShip(name, startCoords, orientation, perspective) {
-    return gameboard.placeShip(name, startCoords, orientation, perspective);
+  function placeShip(name, startCoords, orientation) {
+    return gameboard.placeShip(name, startCoords, orientation);
   }
 
   function recordHit([x, y], perspective) {
@@ -13,11 +13,13 @@ export default function Player() {
   const allShipsPlaced = () => gameboard.allShipsPlaced();
   const allShipsSunk = () => gameboard.allSunk();
   const renderBoard = (perspective) => gameboard.renderBoard(perspective);
+  const getFleet=()=>gameboard.getFleet()
   return {
     placeShip,
     allShipsPlaced,
     allShipsSunk,
     recordHit,
     renderBoard,
+    getFleet
   };
 }

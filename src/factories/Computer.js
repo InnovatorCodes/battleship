@@ -1,7 +1,7 @@
 import Player from "./Player";
 
 export default function Computer() {
-  let comp = new Player("player2");
+  let comp = Player("player2");
   let board = Array(10)
     .fill()
     .map(() =>
@@ -63,6 +63,7 @@ export default function Computer() {
         else for (let i = 0; i < length; i++) board[x][y + i] = 1;
       }
     }
+    return comp.getFleet();
   }
 
   function recordHit([x, y], perspective) {
@@ -85,5 +86,7 @@ export default function Computer() {
     enemyBoard[x][y] = result;
   };
   const allShipsSunk = () => comp.allShipsSunk();
-  return { placeShips, recordHit, launchAttack, logResult, allShipsSunk };
+  const renderBoard=(perspective)=>comp.renderBoard(perspective)
+  const getFleet=()=>comp.getFleet()
+  return { placeShips, recordHit, launchAttack, logResult, allShipsSunk,renderBoard,getFleet };
 }
