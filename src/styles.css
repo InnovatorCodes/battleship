@@ -142,13 +142,41 @@ body {
 
 .battlePage{
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
+  width: min-content;
+}
+
+.attackres{
+  background-color: rgb(27, 27, 27);
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  font-family: "Montserrat",sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 1rem;
+  border-radius: 1rem;
 }
 
 .boards {
   display: flex;
   gap: 50px;
+}
+
+.passdevice{
+  align-self: stretch;
+  padding: 1rem;
+  background-color: rgb(27, 27, 27);
+  border-radius: 1rem;
+  font-family: "Montserrat",sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 
 .player {
@@ -487,4 +515,43 @@ dialog .restart:hover{
 
 .remove{
   animation: removekf forwards 1s;
+}
+
+.overlay[open]{
+  width: 50vw;
+  height: 50vh;
+  color: white;
+  font-family: "Montserrat";
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.overlay[open] .maintext{
+  font-family: "aquire";
+  color: white;
+  font-size: 4rem;
+}
+
+.overlay[open] .subtext{
+  font-family: "aquire";
+  color:  white;
+  font-size: 2rem;
+}
+
+.changeplayer{
+  border-radius: 1rem;
+  border: 2px solid white;
+  padding: 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.changeplayer:hover{
+  background-color: white;
+  color: black;
+}
+
+body:has(dialog[open]) {
+  filter: blur(50px);
 }

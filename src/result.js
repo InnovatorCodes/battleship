@@ -29,8 +29,7 @@ function hideResultDialog(){
     resDialog.classList.add('remove');
     setTimeout(()=>{
         resDialog.close();
-        while(resDialog.hasChildNodes()) resDialog.removeChild(resDialog.firstChild);
-        resDialog.classList.remove('remove')
+        document.querySelector('.maindiv').removeChild(resDialog);
     },1000);
 }
 

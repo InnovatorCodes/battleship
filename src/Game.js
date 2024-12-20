@@ -44,10 +44,36 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
   battlePage.classList.add('battlePage');
   const boards=document.createElement("div");
   boards.classList.add('boards');
-  const result=document.createElement('dialog');
-  battlePage.appendChild(boards);
+  const result=document.createElement('dialog');  
+  const attackres=document.createElement('div');
+  attackres.classList.add('attackres');
+  battlePage.append(attackres,boards);
+  if(mode=='pvp'){
+    const passDevice=document.createElement('div');
+    passDevice.classList.add('passdevice');
+    passDevice.textContent=`PLEASE WAIT TILL THE "PASS DEVICE" SCREEN APPEARS BEFORE PASSING THE DEVICE TO YOUR OPPONENT TO AVOID SPOILERS`;
+    battlePage.appendChild(passDevice);
+  }
   battlePage.style.animation="fadeIn forwards 1s"
   document.querySelector('.maindiv').append(battlePage,result)
+  if(mode=="pvp"){
+    const overlay=document.createElement('dialog');
+    overlay.classList.add('overlay');
+    const maintext=document.createElement('div');
+    maintext.classList.add('maintext');
+    maintext.textContent="It's Time to Switch!"
+    const subtext=document.createElement('div');
+    subtext.classList.add('subtext');
+    subtext.textContent="Pass the device to your opponent to continue the battle."
+    const changebtn=document.createElement('div');
+    changebtn.classList.add('changeplayer');
+    changebtn.textContent="LET THE BATTLE CONTINUE"
+    changebtn.addEventListener('click',()=>{
+      overlay.close();
+    })
+    overlay.append(maintext,subtext,changebtn);
+    document.querySelector('.maindiv').appendChild(overlay);
+  } 
   let player1, player2;
   let turn = 0;
 
@@ -74,7 +100,8 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
     console.log(player2.getFleet());
     player1.renderBoard('user');
     player2.renderBoard('enemy');
-    gameOverCallback(player1.name,false)
+    document.querySelector('.attackres').textContent=`COMMANDER ${(player1.name).toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
+    //gameOverCallback(player1.name,false)
   }
 
   
@@ -86,22 +113,28 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
       let x, y;
       let pos = target.dataset.pos;
       [x, y] = pos.split(" ");
+      const attackres=document.querySelector('.attackres');
       let userAttackRes = player2.recordHit([parseInt(x), parseInt(y)], "enemy");
+      attackres.textContent=`IT'S THE COMPUTER'S TURN. PLEASE WAIT FOR YOUR TURN`
+      boardPlayer2.removeEventListener("click", handleUserClickAI);
       if (player2.allShipsSunk()) {
-        boardPlayer2.removeEventListener("click", handleUserClickAI);
-        gameOverCallback(player1.name,false)
+        gameOverCallback(player1.name,false);
         return;
       }
       if (userAttackRes != 0) {
-        let compAttack = player2.launchAttack();
-        let compAttackRes = player1.recordHit(compAttack, "user");
-        if (player1.allShipsSunk()) {
-          boardPlayer2.removeEventListener("click", handleUserClickAI);
-          gameOverCallback(player1.name,true);
-          return;
-        }
-        //if(attackResult==0) console.log([x,y],'repeat attack');
-        player2.logResult(compAttack, compAttackRes);
+        setTimeout(()=>{
+          let compAttack = player2.launchAttack();
+          let compAttackRes = player1.recordHit(compAttack, "user");
+          if (player1.allShipsSunk()) {
+            boardPlayer2.removeEventListener("click", handleUserClickAI);
+            gameOverCallback(player1.name,true);
+            return;
+          }
+          //if(attackResult==0) console.log([x,y],'repeat attack');
+          player2.logResult(compAttack, compAttackRes);
+          boardPlayer2.addEventListener('click',handleUserClickAI);
+          attackres.textContent=`COMMANDER ${(player1.name).toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
+        },1500)
       }
     }
   }
@@ -117,6 +150,8 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
     player2_ships.forEach(([name,startcoords,orientation])=>player2.placeShip(name,startcoords,orientation))
     player1.renderBoard('user');
     player2.renderBoard('enemy');
+    document.querySelector('.overlay').showModal();
+    document.querySelector('.attackres').textContent=`COMMANDER ${(player1.name).toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
   }
   
   function handleUserClickPVP(event) {
@@ -145,10 +180,14 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
         return;
       }
       if (playerAttackRes != 0) {
-        currentOpponent.renderBoard("user");
-        currentPlayer.renderBoard("enemy");
-        if (turn == 0) turn++;
-        else turn--;
+        setTimeout(()=>{
+          document.querySelector('dialog.overlay').showModal();
+          document.querySelector('.attackres').textContent=`COMMANDER ${(currentOpponent.name).toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
+          currentOpponent.renderBoard("user");
+          currentPlayer.renderBoard("enemy");
+          if (turn == 0) turn++;
+          else turn--;
+        },1300);
       }
     }
   }
