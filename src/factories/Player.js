@@ -1,6 +1,6 @@
 import GameBoard from "./Gameboard";
 
-export default function Player() {
+export default function Player(name) {
   let gameboard = GameBoard();
   function placeShip(name, startCoords, orientation) {
     return gameboard.placeShip(name, startCoords, orientation);
@@ -12,9 +12,10 @@ export default function Player() {
 
   const allShipsPlaced = () => gameboard.allShipsPlaced();
   const allShipsSunk = () => gameboard.allSunk();
-  const renderBoard = (perspective) => gameboard.renderBoard(perspective);
+  const renderBoard = (perspective) => gameboard.renderBoard(name,perspective);
   const getFleet=()=>gameboard.getFleet()
   return {
+    name,
     placeShip,
     allShipsPlaced,
     allShipsSunk,

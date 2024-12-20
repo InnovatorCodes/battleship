@@ -65,6 +65,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
         enemyShip.src = shipsvg;
         enemyShip.style.width = `calc(var(--cell-size)*${length})`;
         enemyShip.style.animation = "fadeIn 0.5s forwards";
+        enemyShip.style.opacity="0.3";
         if (shipName == "submarine")
           enemyShip.style.height = `var(--cell-size)*0.8`;
         if (orientation) {
@@ -106,7 +107,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
   }
 }
 
-function renderMap(perspective, shipFleet, board) {
+function renderMap(name,perspective, shipFleet, board) {
   function appendShip(ship, boardName) {
     const shipImg = document.createElement("img");
     shipImg.src = shipsvg;

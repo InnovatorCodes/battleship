@@ -71,7 +71,7 @@ function addHighlightCells(x, y, length, orientation) {
   }
 }
 
-function fleetSetup(playerName,callback){
+function fleetSetup(name,callback){
   let shipsPlacement=[];
   const playerDiv = document.createElement("div");
   playerDiv.classList.add("player");
@@ -159,7 +159,11 @@ function fleetSetup(playerName,callback){
     name.textContent = i + 1;
     rowNames.appendChild(name);
   }
+  const playerName=document.createElement('h1');
+  playerName.classList.add('playername');
+  playerName.textContent=`COMMANDER ${name},`;
   const title = document.createElement("h1");
+  title.classList.add('title');
   boardInfo.append(columnNames, rowNames);
   title.textContent = "DEPLOY YOUR FLEET"
   const fleet=createFleetUI()
@@ -183,11 +187,10 @@ function fleetSetup(playerName,callback){
   buttons.append(resetbtn,confirmbtn)
   confirmbtn.addEventListener('click',()=>{
     if(shipsPlacement.length==5) {
-      callback(shipsPlacement,playerName)
+      callback(shipsPlacement,name)
     }
   })
   resetbtn.addEventListener('click',()=>{
-    console.log('hi')
     shipsPlacement.forEach(([name,startCoords,orientation])=>{
       let length=shipLengths[shipNames.indexOf(name.toUpperCase())];
       if(orientation){
@@ -198,7 +201,7 @@ function fleetSetup(playerName,callback){
       else{
         const shipCell=boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]];
         shipCell.removeChild(shipCell.firstChild);
-        clearHighlightCells();
+        for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[startCoords[0]*10+startCoords[1]+i].dataset.ship=null;
       }
     })
     shipsPlacement=[];
@@ -208,7 +211,9 @@ function fleetSetup(playerName,callback){
     playerDiv.removeChild(oldFleet);
     playerDiv.insertBefore(newFleet,buttons)
   })
-  playerDiv.append(title, boardInfo,fleet,buttons);
+  playerDiv.append(playerName,title, boardInfo,fleet,buttons);
+  playerDiv.style.animation="fadeIn forwards 1s"
+  document.querySelector('.maindiv').appendChild(playerDiv);
   return playerDiv;
 }
 
@@ -218,6 +223,7 @@ function placeShipUI(name,startCoords,orientation) {
   const shipImg = document.createElement("img");
   shipImg.src = shipsvg;
   shipImg.classList.add("shipimg");
+  shipImg.draggable=false
   shipImg.style.width = `calc(var(--cell-size)*${length})`;
   if (orientation) {
     shipImg.style.transform = "rotate(270deg)";
@@ -310,7 +316,8 @@ function createFleetUI(){
 
       // Apply the same styles to the drag image
       dragImage.style.position = 'absolute';
-      dragImage.style.top = '-9999px'; // Hide it offscreen
+      //dragImage.style.top = '-9999px'; // Hide it offscreen
+      dragImage.style.opacity=0.001
       dragImage.style.width=`${rect.width}px`;
       dragImage.style.border='2px solid white';
       dragImage.style.outline='none';

@@ -39,28 +39,31 @@ function createBoard(name) {
     return playerDiv;
   }
  
-function startGame(mode,player1_ships,player2_ships){
+function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,gameOverCallback){
   const battlePage=document.createElement('div');
   battlePage.classList.add('battlePage');
   const boards=document.createElement("div");
   boards.classList.add('boards');
+  const result=document.createElement('dialog');
   battlePage.appendChild(boards);
-  document.querySelector('.maindiv').appendChild(battlePage)
+  battlePage.style.animation="fadeIn forwards 1s"
+  document.querySelector('.maindiv').append(battlePage,result)
   let player1, player2;
   let turn = 0;
 
   if (mode == "ai") {
-    battleshipAI(player1_ships);
+    battleshipAI(player1_Name,player1_ships);
     const boardPlayer2 = document.querySelector(".player2 .board");
     boardPlayer2.addEventListener("click", handleUserClickAI);
   } else {
-    battleshipPvP(player1_ships,player2_ships);
+    battleshipPvP(player1_Name,player1_ships,player2_Name,player2_ships);
     const boardPlayer2 = document.querySelector(".player2 .board");
     boardPlayer2.addEventListener("click", handleUserClickPVP);
   }
-  
-  function battleshipAI(player1_ships) {
-    player1 = Player();
+  return battlePage
+
+  function battleshipAI(player1_Name,player1_ships) {
+    player1 = Player(player1_Name);
     player2 = Computer();
   
     document.querySelector('.boards').appendChild(createBoard("player1"));
@@ -71,10 +74,12 @@ function startGame(mode,player1_ships,player2_ships){
     console.log(player2.getFleet());
     player1.renderBoard('user');
     player2.renderBoard('enemy');
+    gameOverCallback(player1.name,false)
   }
 
   
   function handleUserClickAI(event) {
+    //gameOverCallback('player1',false)
     const boardPlayer2 = document.querySelector(".player2 .board");
     let target = event.target;
     if (target.classList.contains("cell")) {
@@ -84,7 +89,7 @@ function startGame(mode,player1_ships,player2_ships){
       let userAttackRes = player2.recordHit([parseInt(x), parseInt(y)], "enemy");
       if (player2.allShipsSunk()) {
         boardPlayer2.removeEventListener("click", handleUserClickAI);
-        console.log("You Won");
+        gameOverCallback(player1.name,false)
         return;
       }
       if (userAttackRes != 0) {
@@ -92,7 +97,7 @@ function startGame(mode,player1_ships,player2_ships){
         let compAttackRes = player1.recordHit(compAttack, "user");
         if (player1.allShipsSunk()) {
           boardPlayer2.removeEventListener("click", handleUserClickAI);
-          console.log("Oops! Computer Won");
+          gameOverCallback(player1.name,true);
           return;
         }
         //if(attackResult==0) console.log([x,y],'repeat attack');
@@ -101,9 +106,9 @@ function startGame(mode,player1_ships,player2_ships){
     }
   }
   
-  function battleshipPvP(player1_ships,player2_ships) {
-    player1 = Player();
-    player2 = Player();
+  function battleshipPvP(player1_Name,player1_ships,player2_Name,player2_ships) {
+    player1 = Player(player1_Name);
+    player2 = Player(player2_Name);
   
     boards.appendChild(createBoard("player1"));
     boards.appendChild(createBoard("player2"));
@@ -136,7 +141,7 @@ function startGame(mode,player1_ships,player2_ships){
       );
       if (currentOpponent.allShipsSunk()) {
         boardPlayer2.removeEventListener("click", handleUserClickPVP);
-        console.log("Player 1 Won");
+        gameOverCallback(currentPlayer.name,false)
         return;
       }
       if (playerAttackRes != 0) {
@@ -147,7 +152,6 @@ function startGame(mode,player1_ships,player2_ships){
       }
     }
   }
-  return battlePage
 }
 
 export {startGame}
