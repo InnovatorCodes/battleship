@@ -21,6 +21,6 @@ export default function Player(name) {
     allShipsSunk,
     recordHit,
     renderBoard,
-    getFleet
+    getFleet,
   };
 }

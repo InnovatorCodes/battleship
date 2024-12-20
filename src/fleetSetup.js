@@ -7,6 +7,7 @@ import verticalsvg from "./assets/vertical.svg";
 import horizontalsvg from "./assets/horizontal.svg";
 import confirmsvg from "./assets/confirm.svg";
 import resetsvg from "./assets/reset.svg";
+import randomizesvg from "./assets/randomize.svg";
 
 const shipSVGs=[allycarrier,allybattleship,allycruiser,allysubmarine,allydestroyer];
 const shipNames=["CARRIER","BATTLESHIP","CRUISER","SUBMARINE","DESTROYER"];
@@ -15,6 +16,8 @@ const shipLengths=[5,4,3,3,2];
 let orientation=0,length;
 let shipsvg;
 let currentDragCells = [];
+let appendedShips=[];
+let shipsPlacement=[];
 
 function clearHighlightCells() {
   currentDragCells.forEach(cell => {
@@ -72,7 +75,6 @@ function addHighlightCells(x, y, length, orientation) {
 }
 
 function fleetSetup(name,callback){
-  let shipsPlacement=[];
   const playerDiv = document.createElement("div");
   playerDiv.classList.add("player");
   playerDiv.classList.add("setup");
@@ -121,13 +123,6 @@ function fleetSetup(name,callback){
             }
             if(valid){
               placeShipUI(name,startCoords,orientation);
-              let draggableEementIndex=shipNames.indexOf(name.toUpperCase());
-              const draggableElement=document.querySelectorAll('.shipdiv')[draggableEementIndex];
-              const rect=draggableElement.getBoundingClientRect();
-              draggableElement.style.width=`${rect.width}px`;
-              draggableElement.style.height=`${rect.height}px`;
-              while(draggableElement.hasChildNodes()) draggableElement.removeChild(draggableElement.firstChild);
-              draggableElement.draggable=false;
               shipsPlacement.push([name,startCoords,orientation])
             }
           }
@@ -184,25 +179,31 @@ function fleetSetup(name,callback){
   const resetText=document.createElement('div');
   resetText.textContent='RESET';
   resetbtn.append(resetImg,resetText);
-  buttons.append(resetbtn,confirmbtn)
+  const randomizebtn=document.createElement('div');
+  randomizebtn.classList.add('randomize');
+  const randomizeImg=document.createElement('img');
+  randomizeImg.src=randomizesvg;
+  const randomizeText=document.createElement('div');
+  randomizeText.textContent='RANDOMIZE';
+  randomizebtn.append(randomizeImg,randomizeText);
+  buttons.append(randomizebtn,resetbtn,confirmbtn)
+
   confirmbtn.addEventListener('click',()=>{
     if(shipsPlacement.length==5) {
       callback(shipsPlacement,name)
     }
   })
-  resetbtn.addEventListener('click',()=>{
+
+  function resetFleetSetup(){
+    appendedShips.forEach((shipCell)=>{
+      shipCell.removeChild(shipCell.firstChild);
+    })
+    appendedShips=[];
+    const boardDiv=document.querySelector('.board');
     shipsPlacement.forEach(([name,startCoords,orientation])=>{
       let length=shipLengths[shipNames.indexOf(name.toUpperCase())];
-      if(orientation){
-        const shipCell=boardDiv.querySelectorAll(".cell")[(startCoords[0] + length - 1) * 10 + startCoords[1]];
-        shipCell.removeChild(shipCell.firstChild);
-        for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[(startCoords[0]+i)*10+startCoords[1]].dataset.ship=null;
-      }
-      else{
-        const shipCell=boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]];
-        shipCell.removeChild(shipCell.firstChild);
-        for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[startCoords[0]*10+startCoords[1]+i].dataset.ship=null;
-      }
+      if(orientation) for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[(startCoords[0]+i)*10+startCoords[1]].dataset.ship=null;
+      else for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[startCoords[0]*10+startCoords[1]+i].dataset.ship=null;
     })
     shipsPlacement=[];
     const oldFleet=playerDiv.querySelector('.fleet');
@@ -210,7 +211,74 @@ function fleetSetup(name,callback){
     newFleet.classList.add('fleet');
     playerDiv.removeChild(oldFleet);
     playerDiv.insertBefore(newFleet,buttons)
+  }
+
+  resetbtn.addEventListener('click',()=>{
+    resetFleetSetup();
   })
+
+  function placeShipsRandom(){
+    resetFleetSetup();
+    shipsPlacement=[];
+    const board = Array(10)
+      .fill()
+      .map(() =>
+        Array(10)
+          .fill()
+          .map(() => 0)
+      );
+    const shipNames = [
+      "carrier",
+      "battleship",
+      "cruiser",
+      "submarine",
+      "destroyer",
+    ];
+    const shipLengths = [5, 4, 3, 3, 2];
+    for (let i = 0; i < 5; i++) {
+      let orientation = Math.random() > 0.5 ? 1 : 0;
+      let length = shipLengths[i];
+      let name = shipNames[i];
+      let x, y;
+      if (orientation) {
+        let collision;
+        do {
+          collision = false;
+          x = Math.floor(Math.random() * (10 - length));
+          y = Math.floor(Math.random() * 10);
+          for (let j = 0; j < length; j++) {
+            if (board[x + j][y]) {
+              collision = true;
+              break;
+            }
+          }
+        } while (collision);
+        for(let j=0;j<length;j++)board[x+j][y]=1;
+      } else {
+        let collision;
+        do {
+          collision = false;
+          x = Math.floor(Math.random() * 10);
+          y = Math.floor(Math.random() * (10 - length));
+          for (let j = 0; j < length; j++) {
+            if (board[x][y + j]) {
+              collision = true;
+              break;
+            }
+          }
+        } while (collision);
+        for(let j=0;j<length;j++)board[x][y+j]=1;
+      }
+      placeShipUI(name,[x,y],orientation);
+      shipsPlacement.push([name,[x,y],orientation])
+    }
+    console.log(shipsPlacement);
+  }
+  
+  randomizebtn.addEventListener('click',()=>{
+    placeShipsRandom();
+  })
+
   playerDiv.append(playerName,title, boardInfo,fleet,buttons);
   playerDiv.style.animation="fadeIn forwards 1s"
   document.querySelector('.maindiv').appendChild(playerDiv);
@@ -233,14 +301,23 @@ function placeShipUI(name,startCoords,orientation) {
       [
         (startCoords[0] + length - 1) * 10 + startCoords[1]
       ].appendChild(shipImg);
+    appendedShips.push( boardDiv.querySelectorAll(".cell")[(startCoords[0] + length - 1) * 10 + startCoords[1]]);
     for (let i = 0; i < length; i++)
       boardDiv.querySelectorAll(".cell")[
         (startCoords[0] + i) * 10 + startCoords[1]
       ].dataset.ship = name;
   } else{
     boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]].appendChild(shipImg);
+    appendedShips.push(boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]]);
     for(let i=0;i<length;i++) boardDiv.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]+i].dataset.ship=name;
   } 
+  let draggableElementIndex=shipNames.indexOf(name.toUpperCase());
+  const draggableElement=document.querySelectorAll('.shipdiv')[draggableElementIndex];
+  const rect=draggableElement.getBoundingClientRect();
+  draggableElement.style.width=`${rect.width}px`;
+  draggableElement.style.height=`${rect.height}px`;
+  while(draggableElement.hasChildNodes()) draggableElement.removeChild(draggableElement.firstChild);
+  draggableElement.draggable=false;
 }
 
 function setShipInfo(name) {

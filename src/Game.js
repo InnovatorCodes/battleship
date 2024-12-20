@@ -187,7 +187,7 @@ function startGame(mode,player1_Name,player1_ships,player2_Name,player2_ships,ga
           currentPlayer.renderBoard("enemy");
           if (turn == 0) turn++;
           else turn--;
-        },1300);
+        },1600);
       }
     }
   }

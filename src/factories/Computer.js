@@ -2,13 +2,6 @@ import Player from "./Player";
 
 export default function Computer() {
   let comp = Player("player2");
-  let board = Array(10)
-    .fill()
-    .map(() =>
-      Array(10)
-        .fill()
-        .map(() => 0),
-    );
   const enemyBoard = Array(10)
     .fill()
     .map(() =>
@@ -17,7 +10,14 @@ export default function Computer() {
         .map(() => 0),
     );
 
-  function placeShips() {
+  const placeShips=()=>{
+    const board = Array(10)
+      .fill()
+      .map(() =>
+        Array(10)
+          .fill()
+          .map(() => 0)
+      );
     const shipNames = [
       "carrier",
       "battleship",
@@ -37,8 +37,8 @@ export default function Computer() {
           collision = false;
           x = Math.floor(Math.random() * (10 - length));
           y = Math.floor(Math.random() * 10);
-          for (let i = 0; i < length; i++) {
-            if (board[x + i][y]) {
+          for (let j = 0; j < length; j++) {
+            if (board[x + j][y]) {
               collision = true;
               break;
             }
@@ -50,20 +50,19 @@ export default function Computer() {
           collision = false;
           x = Math.floor(Math.random() * 10);
           y = Math.floor(Math.random() * (10 - length));
-          for (let i = 0; i < length; i++) {
-            if (board[x][y + i]) {
+          for (let j = 0; j < length; j++) {
+            if (board[x][y + j]) {
               collision = true;
               break;
             }
           }
         } while (collision);
       }
-      if (comp.placeShip(name, [x, y], orientation)) {
-        if (orientation) for (let i = 0; i < length; i++) board[x + i][y] = 1;
-        else for (let i = 0; i < length; i++) board[x][y + i] = 1;
+      if(comp.placeShip(name,[x,y],orientation)){
+        if(orientation) for(let j=0;j<length;j++)board[x+j][y]=1;
+        else for(let j=0;j<length;j++)board[x][y+j]=1;
       }
     }
-    return comp.getFleet();
   }
 
   function recordHit([x, y], perspective) {
