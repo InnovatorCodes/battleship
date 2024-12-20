@@ -1,6 +1,8 @@
 import Player from "./Player";
 
 export default function Computer() {
+  let mustExplore=[];
+  let lastdir;
   let comp = Player("player2");
   const enemyBoard = Array(10)
     .fill()
@@ -70,20 +72,66 @@ export default function Computer() {
   }
 
   function launchAttack() {
-    let x, y;
-    let repeatedAttack;
-    do {
-      repeatedAttack = false;
-      x = Math.floor(Math.random() * 10);
-      y = Math.floor(Math.random() * 10);
-      if (enemyBoard[x][y] != 0) repeatedAttack = true;
-    } while (repeatedAttack);
-    return [x, y];
+    if(mustExplore.length==0){
+      let attack;
+      do {
+        attack=generateRandomAttack();
+      } while (!isValidPosition(attack[0],attack[1]));
+      lastdir=null;
+      return attack;
+    }
+    else{
+      let nextAttack=mustExplore.pop();
+      lastdir=nextAttack.dir;
+      return nextAttack.pos;
+    }
+
+    function generateRandomAttack(){
+      let x = Math.floor(Math.random() * 10);
+      let y = Math.floor(Math.random() * 10);
+      return [x,y];
+    }
   }
 
   const logResult = ([x, y], result) => {
     enemyBoard[x][y] = result;
+    if(result==2){
+      mustExplore=[];
+    }
+    else if(result==1){
+      if(lastdir==null){
+        const deltas = [[-1, 0], [1, 0],[0, -1],[0, 1]];
+        for (const [dx, dy] of deltas) {
+          const newRow = x + dx;
+          const newCol = y + dy;
+          if (isValidPosition(newRow, newCol)) mustExplore.push(createPosition(newRow,newCol,dx,dy));
+        }
+      }
+      else {
+        let newX,newY;
+        newX=x+lastdir[0];
+        newY=y+lastdir[1];
+        mustExplore.push(createPosition(newX,newY,lastdir[0],lastdir[1]));
+      }
+    }
   };
+
+  function createPosition(row,col,dx,dy){
+    return {
+      pos:[row,col],
+      dir:[dx,dy]
+    };
+  }
+
+  function isValidPosition(row, col) {
+    return (
+        row >= 0 &&
+        col >= 0 &&
+        row < 10 &&
+        col < 10 &&
+        enemyBoard[row][col]==0
+    );
+  }
   const allShipsSunk = () => comp.allShipsSunk();
   const renderBoard=(perspective)=>comp.renderBoard(perspective)
   const getFleet=()=>comp.getFleet()

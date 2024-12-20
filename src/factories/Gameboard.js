@@ -1,5 +1,5 @@
 import Ship from "./Ship";
-import { recordHitUI, renderMap } from "../GameboardUI";
+import { recordHitUI, renderMap } from "../components/GameboardUI";
 export default function GameBoard() {
   const board = Array(10)
     .fill()

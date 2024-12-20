@@ -243,7 +243,7 @@ body {
 }
 
 .randomize img{
-  width: 1.8rem;
+  width: 2rem;
 }
 
 .shipdiv{
@@ -274,7 +274,7 @@ body {
   display: grid;
   grid-template-columns: var(--cell-size) repeat(10, var(--cell-size));
   grid-template-rows: var(--cell-size) repeat(10, var(--cell-size));
-  justify-content: start;
+  place-content: start;
 }
 
 .columnnames {
@@ -303,6 +303,7 @@ body {
   position: relative;
   align-self: flex-start;
   border-collapse: collapse;
+  outline: calc(var(--border-width)*2) solid white;
 }
 
 .boardInfo > div > div {
@@ -323,6 +324,16 @@ body {
   );
   position: relative;
   justify-content: start;
+}
+
+.boards .title{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boards .title .playername{
+  font-family: "aquire";
 }
 
 @keyframes scanning {
@@ -360,7 +371,6 @@ body {
 }
 
 .cell {
-  outline: var(--border-width) solid white;
   width: var(--cell-size);
   height: var(--cell-size);
   display: flex;
@@ -369,6 +379,16 @@ body {
   align-items: center;
   border-collapse: collapse;
   cursor: pointer;
+  border-bottom: var(--border-width) solid white; 
+  border-right: var(--border-width) solid white; 
+}
+
+.cell:nth-child(10n){
+  border-right: none;
+}
+
+.cell:nth-child(n+91){
+  border-bottom: none;
 }
 
 .dragover{
@@ -534,6 +554,7 @@ dialog .restart:hover{
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  animation: fadeIn forwards 0.4s;
 }
 
 .overlay[open] .maintext{
@@ -559,6 +580,7 @@ dialog .restart:hover{
 .changeplayer:hover{
   background-color: white;
   color: black;
+  cursor: pointer;
 }
 
 body:has(dialog[open]) {

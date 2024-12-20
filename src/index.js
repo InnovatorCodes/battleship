@@ -1,8 +1,8 @@
 import "./styles.css";
-import confirmsvg from "./assets/confirm.svg";
-import { fleetSetup } from "./fleetSetup";
-import { startGame } from "./Game";
-import { displayResultDialog, hideResultDialog } from "./result";
+import confirmsvg from "./assets/SVGs/confirm.svg";
+import { fleetSetup } from "./components/fleetSetup";
+import { startGame } from "./components/Game";
+import { displayResultDialog, hideResultDialog } from "./components/result";
 
 let currentMainDiv;
 
@@ -131,6 +131,14 @@ function playerNames(mode,playerNumber,confirmCallback){
         console.log(name)
         input.textContent="";
         confirmCallback(name,playerNumber);
+    })
+    document.addEventListener('keydown',(event)=>{
+        if(event.key=='Enter'){
+            let name=input.value.toUpperCase();
+            console.log(name)
+            input.textContent="";
+            confirmCallback(name,playerNumber);
+        }
     })
     nameDiv.append(infoText,input,confirmName);
     if(mode=='pvp'){
