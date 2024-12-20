@@ -1,7 +1,7 @@
 import Player from "./Player";
 
 export default function Computer() {
-  let mustExplore=[];
+  let mustExplore = [];
   let lastdir;
   let comp = Player("player2");
   const enemyBoard = Array(10)
@@ -12,13 +12,13 @@ export default function Computer() {
         .map(() => 0),
     );
 
-  const placeShips=()=>{
+  const placeShips = () => {
     const board = Array(10)
       .fill()
       .map(() =>
         Array(10)
           .fill()
-          .map(() => 0)
+          .map(() => 0),
       );
     const shipNames = [
       "carrier",
@@ -60,80 +60,87 @@ export default function Computer() {
           }
         } while (collision);
       }
-      if(comp.placeShip(name,[x,y],orientation)){
-        if(orientation) for(let j=0;j<length;j++)board[x+j][y]=1;
-        else for(let j=0;j<length;j++)board[x][y+j]=1;
+      if (comp.placeShip(name, [x, y], orientation)) {
+        if (orientation) for (let j = 0; j < length; j++) board[x + j][y] = 1;
+        else for (let j = 0; j < length; j++) board[x][y + j] = 1;
       }
     }
-  }
+  };
 
   function recordHit([x, y], perspective) {
     return comp.recordHit([x, y], perspective);
   }
 
   function launchAttack() {
-    if(mustExplore.length==0){
+    if (mustExplore.length == 0) {
       let attack;
       do {
-        attack=generateRandomAttack();
-      } while (!isValidPosition(attack[0],attack[1]));
-      lastdir=null;
+        attack = generateRandomAttack();
+      } while (!isValidPosition(attack[0], attack[1]));
+      lastdir = null;
       return attack;
-    }
-    else{
-      let nextAttack=mustExplore.pop();
-      lastdir=nextAttack.dir;
+    } else {
+      let nextAttack = mustExplore.pop();
+      lastdir = nextAttack.dir;
       return nextAttack.pos;
     }
 
-    function generateRandomAttack(){
+    function generateRandomAttack() {
       let x = Math.floor(Math.random() * 10);
       let y = Math.floor(Math.random() * 10);
-      return [x,y];
+      return [x, y];
     }
   }
 
   const logResult = ([x, y], result) => {
     enemyBoard[x][y] = result;
-    if(result==2){
-      mustExplore=[];
-    }
-    else if(result==1){
-      if(lastdir==null){
-        const deltas = [[-1, 0], [1, 0],[0, -1],[0, 1]];
+    if (result == 2) {
+      mustExplore = [];
+    } else if (result == 1) {
+      if (lastdir == null) {
+        const deltas = [
+          [-1, 0],
+          [1, 0],
+          [0, -1],
+          [0, 1],
+        ];
         for (const [dx, dy] of deltas) {
           const newRow = x + dx;
           const newCol = y + dy;
-          if (isValidPosition(newRow, newCol)) mustExplore.push(createPosition(newRow,newCol,dx,dy));
+          if (isValidPosition(newRow, newCol))
+            mustExplore.push(createPosition(newRow, newCol, dx, dy));
         }
-      }
-      else {
-        let newX,newY;
-        newX=x+lastdir[0];
-        newY=y+lastdir[1];
-        mustExplore.push(createPosition(newX,newY,lastdir[0],lastdir[1]));
+      } else {
+        let newX, newY;
+        newX = x + lastdir[0];
+        newY = y + lastdir[1];
+        mustExplore.push(createPosition(newX, newY, lastdir[0], lastdir[1]));
       }
     }
   };
 
-  function createPosition(row,col,dx,dy){
+  function createPosition(row, col, dx, dy) {
     return {
-      pos:[row,col],
-      dir:[dx,dy]
+      pos: [row, col],
+      dir: [dx, dy],
     };
   }
 
   function isValidPosition(row, col) {
     return (
-        row >= 0 &&
-        col >= 0 &&
-        row < 10 &&
-        col < 10 &&
-        enemyBoard[row][col]==0
+      row >= 0 && col >= 0 && row < 10 && col < 10 && enemyBoard[row][col] == 0
     );
   }
   const allShipsSunk = () => comp.allShipsSunk();
-  const renderBoard=(perspective)=>comp.renderBoard(perspective)
-  const getFleet=()=>comp.getFleet()
-  return { placeShips, recordHit, launchAttack, logResult, allShipsSunk,renderBoard,getFleet };
+  const renderBoard = (perspective) => comp.renderBoard(perspective);
+  const getFleet = () => comp.getFleet();
+  return {
+    placeShips,
+    recordHit,
+    launchAttack,
+    logResult,
+    allShipsSunk,
+    renderBoard,
+    getFleet,
+  };
 }

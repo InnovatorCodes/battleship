@@ -104,7 +104,8 @@ export default function GameBoard() {
   const getShipName = ([x, y]) => board[x][y].ship.shipName;
   const getShipOrientation = ([x, y]) => board[x][y].ship.orientation;
   const getShipStartCoords = ([x, y]) => board[x][y].ship.startCoords;
-  const renderBoard = (name,perspective) => renderMap(name,perspective, shipFleet, board);
+  const renderBoard = (name, perspective) =>
+    renderMap(name, perspective, shipFleet, board);
   return {
     receiveAttack,
     allSunk,
@@ -116,6 +117,5 @@ export default function GameBoard() {
     getShipOrientation,
     getShipStartCoords,
     renderBoard,
-
   };
 }

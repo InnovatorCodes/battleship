@@ -65,7 +65,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
         enemyShip.src = shipsvg;
         enemyShip.style.width = `calc(var(--cell-size)*${length})`;
         enemyShip.style.animation = "fadeIn 0.5s forwards";
-        enemyShip.style.opacity="0.3";
+        enemyShip.style.opacity = "0.3";
         if (shipName == "submarine")
           enemyShip.style.height = `var(--cell-size)*0.8`;
         if (orientation) {
@@ -107,14 +107,13 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
   }
 }
 
-function renderMap(name,perspective, shipFleet, board) {
-  function appendShip(ship,sunk,boardName) {
+function renderMap(name, perspective, shipFleet, board) {
+  function appendShip(ship, sunk, boardName) {
     const shipImg = document.createElement("img");
     shipImg.src = shipsvg;
     shipImg.classList.add("shipimg");
     shipImg.style.width = `calc(var(--cell-size)*${length})`;
-    if (sunk)
-      shipImg.style.animation = "fadeOut 0.5s forwards";
+    if (sunk) shipImg.style.animation = "fadeOut 0.5s forwards";
     if (ship.orientation) {
       shipImg.style.transform = "rotate(270deg)";
       shipImg.style.transformOrigin = `${(1 / (2 * length)) * 100}% 50%`;
@@ -149,14 +148,14 @@ function renderMap(name,perspective, shipFleet, board) {
     removeChildNodes("player1");
     shipFleet.forEach((ship) => {
       setShipInfo(ship.shipName, "ally");
-      appendShip(ship, ship.isSunk(),"player1");
+      appendShip(ship, ship.isSunk(), "player1");
     });
   } else {
     removeChildNodes("player2");
     shipFleet.forEach((ship) => {
       if (ship.isSunk()) {
         setShipInfo(ship.shipName, "enemy");
-        appendShip(ship,ship.isSunk(), "player2");
+        appendShip(ship, ship.isSunk(), "player2");
       }
     });
   }

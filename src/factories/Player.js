@@ -12,8 +12,8 @@ export default function Player(name) {
 
   const allShipsPlaced = () => gameboard.allShipsPlaced();
   const allShipsSunk = () => gameboard.allSunk();
-  const renderBoard = (perspective) => gameboard.renderBoard(name,perspective);
-  const getFleet=()=>gameboard.getFleet()
+  const renderBoard = (perspective) => gameboard.renderBoard(name, perspective);
+  const getFleet = () => gameboard.getFleet();
   return {
     name,
     placeShip,
