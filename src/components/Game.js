@@ -1,5 +1,5 @@
-import Player from "../factories/Player";
-import Computer from "../factories/Computer";
+import Player from "../factories/Player.js";
+import Computer from "../factories/Computer.js";
 
 function createBoard(name) {
   const playerDiv = document.createElement("div");

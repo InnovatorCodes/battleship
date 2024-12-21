@@ -1,4 +1,4 @@
-import GameBoard from "./Gameboard";
+import GameBoard from "./Gameboard.js";
 
 export default function Player(name) {
   let shipsAfloat = 5;

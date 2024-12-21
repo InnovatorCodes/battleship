@@ -1,8 +1,8 @@
 import "./styles.css";
 import confirmsvg from "./assets/SVGs/confirm.svg";
-import { fleetSetup } from "./components/fleetSetup";
-import { startGame } from "./components/Game";
-import { displayResultDialog, hideResultDialog } from "./components/result";
+import { fleetSetup } from "./components/fleetSetup.js";
+import { startGame } from "./components/Game.js";
+import { displayResultDialog, hideResultDialog } from "./components/result.js";
 
 let currentMainDiv;
 
