@@ -92,11 +92,10 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
             document.querySelectorAll(".player1 .cell")[
               startCoords[0] * 10 + startCoords[1]
             ];
-        //console.log(startCoords,shipCell);
+        console.log(shipCell);
         shipCell.querySelector(".shipimg").style.animation =
           "fadeOut 0.5s forwards";
       }
-      //console.log(document.querySelectorAll('.player2 .cell'))
     }
     const hit = document.createElement("img");
     hit.src = hit_svg;
@@ -118,17 +117,15 @@ function renderMap(name, perspective, shipFleet, board) {
       shipImg.style.transform = "rotate(270deg)";
       shipImg.style.transformOrigin = `${(1 / (2 * length)) * 100}% 50%`;
       if (ship.shipName == "submarine")
-        shipImg.style.height = `var(--cell-size)*0.8`;
+        shipImg.style.width = `calc(var(--cell-size)*${length}*0.94)`;
       document
         .querySelectorAll(`.${boardName} .cell`)
         [
           (ship.startCoords[0] + length - 1) * 10 + ship.startCoords[1]
         ].appendChild(shipImg);
     } else {
-      if (ship.shipName == "submarine") {
-        shipImg.style.height = `var(--cell-size)*0.8`;
-        shipImg.style.top = `calc(var(--cell-size)*${ship.startCoords[0] + 0.1})`;
-      }
+      if (ship.shipName == "submarine")
+        shipImg.style.width = `calc(var(--cell-size)*${length}*0.94)`;
       document
         .querySelectorAll(`.${boardName} .cell`)
         [ship.startCoords[0] * 10 + ship.startCoords[1]].appendChild(shipImg);
@@ -182,42 +179,4 @@ function renderMap(name, perspective, shipFleet, board) {
   });
 }
 
-function placeShipUI(ship) {
-  let name = ship.shipName;
-  let startCoords = ship.startCoords;
-  let orientation = ship.orientation;
-  setShipInfo(name, "ally");
-  const player = document.querySelector(`.player1`);
-  const shipImg = document.createElement("img");
-  shipImg.src = shipsvg;
-  shipImg.classList.add("shipimg");
-  shipImg.style.width = `calc(var(--cell-size)*${length})`;
-  if (orientation) {
-    /*shipImg.style.top=`calc(var(--cell-size)*${startCoords[0]})`
-            shipImg.style.left=`calc(var(--cell-size)*${startCoords[1]-length+1})`;*/
-    shipImg.style.transform = "rotate(270deg)";
-    shipImg.style.transformOrigin = `${(1 / (2 * length)) * 100}% 50%`;
-    if (name == "submarine") shipImg.style.height = `var(--cell-size)*0.8`;
-    player
-      .querySelectorAll(".cell")
-      [
-        (startCoords[0] + length - 1) * 10 + startCoords[1]
-      ].appendChild(shipImg);
-    //player.querySelector('.board').appendChild(shipImg);
-    for (let i = 0; i < length; i++)
-      player.querySelectorAll(".cell")[
-        (startCoords[0] + i) * 10 + startCoords[1]
-      ].dataset.ship = name;
-  } else {
-    /*shipImg.style.top=`calc(var(--cell-size)*${startCoords[0]})`
-            shipImg.style.left=`calc(var(--cell-size)*${startCoords[1]})`;*/
-    if (name == "submarine") {
-      shipImg.style.height = `var(--cell-size)*0.8`;
-      shipImg.style.top = `calc(var(--cell-size)*${startCoords[0] + 0.1})`;
-    }
-    //player.querySelector('.board').appendChild(shipImg);
-    player.querySelectorAll(".cell")[startCoords[0] * 10 + startCoords[1]];
-  }
-}
-
-export { recordHitUI, renderMap, placeShipUI };
+export { recordHitUI, renderMap };

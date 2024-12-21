@@ -80,9 +80,24 @@ export default function Computer() {
       lastdir = null;
       return attack;
     } else {
-      let nextAttack = mustExplore.pop();
-      lastdir = nextAttack.dir;
-      return nextAttack.pos;
+      let nextAttack;
+      do {
+        if (mustExplore.length == 0) {
+          lastdir = null;
+          break;
+        }
+        nextAttack = mustExplore.pop();
+        lastdir = nextAttack.dir;
+      } while (!isValidPosition(nextAttack.pos[0], nextAttack.pos[1]));
+      if (lastdir != null) return nextAttack.pos;
+      else {
+        let attack;
+        do {
+          attack = generateRandomAttack();
+        } while (!isValidPosition(attack[0], attack[1]));
+        lastdir = null;
+        return attack;
+      }
     }
 
     function generateRandomAttack() {
@@ -134,6 +149,7 @@ export default function Computer() {
   const allShipsSunk = () => comp.allShipsSunk();
   const renderBoard = (perspective) => comp.renderBoard(perspective);
   const getFleet = () => comp.getFleet();
+  const shipsLeft = () => comp.shipsLeft();
   return {
     placeShips,
     recordHit,
@@ -142,5 +158,6 @@ export default function Computer() {
     allShipsSunk,
     renderBoard,
     getFleet,
+    shipsLeft,
   };
 }

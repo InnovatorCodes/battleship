@@ -65,12 +65,10 @@ function startGame(
     passDevice.classList.add("passdevice");
     passDevice.textContent = `PLEASE WAIT TILL THE "PASS DEVICE" SCREEN APPEARS BEFORE PASSING THE DEVICE TO YOUR OPPONENT TO AVOID SPOILERS`;
     battlePage.appendChild(passDevice);
-  }
-  battlePage.style.animation = "fadeIn forwards 1s";
-  document.querySelector(".maindiv").append(battlePage, result);
-  if (mode == "pvp") {
-    const overlay = document.createElement("dialog");
+    const overlay = document.createElement("div");
     overlay.classList.add("overlay");
+    const overlayContent = document.createElement("div");
+    overlayContent.classList.add("overlay-content");
     const maintext = document.createElement("div");
     maintext.classList.add("maintext");
     maintext.textContent = "It's Time to Switch!";
@@ -82,11 +80,14 @@ function startGame(
     changebtn.classList.add("changeplayer");
     changebtn.textContent = "Done";
     changebtn.addEventListener("click", () => {
-      overlay.close();
+      overlay.classList.add("hidden");
     });
-    overlay.append(maintext, subtext, changebtn);
+    overlayContent.append(maintext, subtext, changebtn);
+    overlay.appendChild(overlayContent);
     document.querySelector(".maindiv").appendChild(overlay);
   }
+  battlePage.style.animation = "fadeIn forwards 1s";
+  document.querySelector(".maindiv").append(battlePage, result);
   let player1, player2;
   let turn = 0;
 
@@ -115,16 +116,13 @@ function startGame(
     document.querySelectorAll(".title .playername")[0].textContent =
       player1_Name;
     document.querySelectorAll(".title .playername")[1].textContent = "COMPUTER";
-    console.log(player2.getFleet());
     player1.renderBoard("user");
     player2.renderBoard("enemy");
     document.querySelector(".attackres").textContent =
       `COMMANDER ${player1.name.toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
-    //gameOverCallback(player1.name,false)
   }
 
   function handleUserClickAI(event) {
-    //gameOverCallback('player1',false)
     const boardPlayer2 = document.querySelector(".player2 .board");
     let target = event.target;
     if (target.classList.contains("cell")) {
@@ -136,7 +134,9 @@ function startGame(
         [parseInt(x), parseInt(y)],
         "enemy",
       );
-      attackres.textContent = `IT'S THE COMPUTER'S TURN. PLEASE WAIT FOR YOUR TURN`;
+      attackres.textContent = "IT'S THE COMPUTER'S TURN";
+      if (userAttackRes == 2)
+        attackres.textContent = `COMMANDER ${player1.name.toUpperCase()}, ${5 - player2.shipsLeft()} SHIP${5 - player2.shipsLeft() > 1 ? "S" : ""} DOWN. ${player2.shipsLeft()} TO GO`;
       boardPlayer2.removeEventListener("click", handleUserClickAI);
       if (player2.allShipsSunk()) {
         gameOverCallback(player1.name, false);
@@ -146,17 +146,15 @@ function startGame(
         setTimeout(() => {
           let compAttack = player2.launchAttack();
           let compAttackRes = player1.recordHit(compAttack, "user");
-          console.log(compAttackRes, compAttack);
           if (player1.allShipsSunk()) {
             boardPlayer2.removeEventListener("click", handleUserClickAI);
             gameOverCallback(player1.name, true);
             return;
           }
-          //if(attackResult==0) console.log([x,y],'repeat attack');
           player2.logResult(compAttack, compAttackRes);
           boardPlayer2.addEventListener("click", handleUserClickAI);
           attackres.textContent = `COMMANDER ${player1.name.toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
-        }, 1500);
+        }, 2000);
       } else {
         boardPlayer2.addEventListener("click", handleUserClickAI);
         attackres.textContent = `COMMANDER ${player1.name.toUpperCase()}, YOU CANNOT ATTACK AN ALREADY ATTACKED REGION. CHOOSE A DIFFERENT ATTACK`;
@@ -188,7 +186,7 @@ function startGame(
       player2_Name;
     player1.renderBoard("user");
     player2.renderBoard("enemy");
-    document.querySelector(".overlay").showModal();
+    document.querySelector(".overlay").classList.remove("hidden");
     document.querySelector(".attackres").textContent =
       `COMMANDER ${player1.name.toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
   }
@@ -213,6 +211,9 @@ function startGame(
         [parseInt(x), parseInt(y)],
         "enemy",
       );
+      if (playerAttackRes == 2)
+        document.querySelector(".attackres").textContent =
+          `COMMANDER ${currentOpponent.name.toUpperCase()}, ${5 - currentOpponent.shipsLeft()} SHIP${5 - currentOpponent.shipsLeft() > 1 ? "S" : ""} DOWN. ${currentOpponent.shipsLeft()} TO GO`;
       if (currentOpponent.allShipsSunk()) {
         boardPlayer2.removeEventListener("click", handleUserClickPVP);
         gameOverCallback(currentPlayer.name, false);
@@ -220,18 +221,20 @@ function startGame(
       }
       if (playerAttackRes != 0) {
         setTimeout(() => {
-          document.querySelector("dialog.overlay").showModal();
-          document.querySelector(".attackres").textContent =
-            `COMMANDER ${currentOpponent.name.toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
-          document.querySelectorAll(".title .playername")[0].textContent =
-            currentOpponent.name;
-          document.querySelectorAll(".title .playername")[1].textContent =
-            currentPlayer.name;
-          currentOpponent.renderBoard("user");
-          currentPlayer.renderBoard("enemy");
-          if (turn == 0) turn++;
-          else turn--;
-        }, 1600);
+          document.querySelector(".overlay").classList.remove("hidden");
+          setTimeout(() => {
+            document.querySelector(".attackres").textContent =
+              `COMMANDER ${currentOpponent.name.toUpperCase()}, IT'S YOUR TURN. CHOOSE YOUR NEXT ATTACK`;
+            document.querySelectorAll(".title .playername")[0].textContent =
+              currentOpponent.name;
+            document.querySelectorAll(".title .playername")[1].textContent =
+              currentPlayer.name;
+            currentOpponent.renderBoard("user");
+            currentPlayer.renderBoard("enemy");
+            if (turn == 0) turn++;
+            else turn--;
+          }, 400);
+        }, 1750);
       }
     }
   }

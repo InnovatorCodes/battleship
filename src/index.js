@@ -138,14 +138,12 @@ function playerNames(mode, playerNumber, confirmCallback) {
   confirmName.append(confirmImg, confirmText);
   confirmName.addEventListener("click", () => {
     let name = input.value.toUpperCase();
-    console.log(name);
     input.textContent = "";
     confirmCallback(name, playerNumber);
   });
   document.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
       let name = input.value.toUpperCase();
-      console.log(name);
       input.textContent = "";
       confirmCallback(name, playerNumber);
     }
@@ -162,12 +160,3 @@ function playerNames(mode, playerNumber, confirmCallback) {
 }
 
 pregame();
-//pregame()
-
-/*const radar=document.createElement('div');
-radar.classList.add('radar');
-const scanner=document.createElement('div');
-scanner.classList.add('scanner')
-radar.appendChild(scanner);
-document.querySelector('.player2').appendChild(radar);
-*/

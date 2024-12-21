@@ -41,7 +41,6 @@ function clearHighlightCells() {
 }
 
 function addHighlightCells(x, y, length, orientation) {
-  //console.log('hi')
   clearHighlightCells(); // Clear any existing highlights first
 
   if (orientation) {
@@ -105,6 +104,12 @@ function fleetSetup(name, callback) {
   boardInfo.classList.add("boardInfo");
   const boardDiv = document.createElement("div");
   boardDiv.classList.add("board");
+  const radar = document.createElement("div");
+  radar.classList.add("radar");
+  const scanner = document.createElement("div");
+  scanner.classList.add("scanner");
+  radar.appendChild(scanner);
+  boardDiv.appendChild(radar);
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       const cell = document.createElement("div");
@@ -314,7 +319,6 @@ function fleetSetup(name, callback) {
       placeShipUI(name, [x, y], orientation);
       shipsPlacement.push([name, [x, y], orientation]);
     }
-    console.log(shipsPlacement);
   }
 
   randomizebtn.addEventListener("click", () => {
