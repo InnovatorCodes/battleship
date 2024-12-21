@@ -80,7 +80,9 @@ function startGame(
     changebtn.classList.add("changeplayer");
     changebtn.textContent = "Done";
     changebtn.addEventListener("click", () => {
-      document.querySelector(".player2 .board").addEventListener('click',handleUserClickPVP);
+      document
+        .querySelector(".player2 .board")
+        .addEventListener("click", handleUserClickPVP);
       overlay.classList.add("hidden");
     });
     overlayContent.append(maintext, subtext, changebtn);

@@ -19,6 +19,7 @@
   --scannercolour: 0, 86, 163;
   --enemymapcolour: 255, 165, 0;
   color: white;
+  font-size: 1.6vh;
 }
 
 body {

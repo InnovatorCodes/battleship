@@ -50,7 +50,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
     const miss = document.createElement("img");
     miss.src = miss_svg;
     miss.classList.add("hit");
-    miss.draggable=false;
+    miss.draggable = false;
     document
       .querySelectorAll(`.${boardName} .cell`)
       [x * 10 + y].appendChild(miss);
@@ -67,7 +67,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
         enemyShip.style.width = `calc(var(--cell-size)*${length})`;
         enemyShip.style.animation = "fadeIn 0.5s forwards";
         enemyShip.style.opacity = "0.3";
-        enemyShip.draggable=false;
+        enemyShip.draggable = false;
         if (shipName == "submarine")
           enemyShip.style.height = `var(--cell-size)*0.8`;
         if (orientation) {
@@ -101,7 +101,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
     const hit = document.createElement("img");
     hit.src = hit_svg;
     hit.classList.add("hit");
-    hit.draggable=false;
+    hit.draggable = false;
     document
       .querySelectorAll(`.${boardName} .cell`)
       [x * 10 + y].appendChild(hit);
@@ -114,7 +114,7 @@ function renderMap(perspective, shipFleet, board) {
     shipImg.src = shipsvg;
     shipImg.classList.add("shipimg");
     shipImg.style.width = `calc(var(--cell-size)*${length})`;
-    shipImg.draggable=false;
+    shipImg.draggable = false;
     if (sunk) shipImg.style.animation = "fadeOut 0.5s forwards";
     if (ship.orientation) {
       shipImg.style.transform = "rotate(270deg)";
@@ -166,7 +166,7 @@ function renderMap(perspective, shipFleet, board) {
           const hit = document.createElement("img");
           hit.src = hit_svg;
           hit.classList.add("hit");
-          hit.draggable=false;
+          hit.draggable = false;
           document
             .querySelectorAll(`.${boardName} .cell`)
             [x * 10 + y].appendChild(hit);
@@ -174,7 +174,7 @@ function renderMap(perspective, shipFleet, board) {
           const miss = document.createElement("img");
           miss.src = miss_svg;
           miss.classList.add("hit");
-          miss.draggable=false;
+          miss.draggable = false;
           document
             .querySelectorAll(`.${boardName} .cell`)
             [x * 10 + y].appendChild(miss);
