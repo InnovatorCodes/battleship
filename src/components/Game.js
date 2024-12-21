@@ -80,6 +80,7 @@ function startGame(
     changebtn.classList.add("changeplayer");
     changebtn.textContent = "Done";
     changebtn.addEventListener("click", () => {
+      document.querySelector(".player2 .board").addEventListener('click',handleUserClickPVP);
       overlay.classList.add("hidden");
     });
     overlayContent.append(maintext, subtext, changebtn);
@@ -220,6 +221,7 @@ function startGame(
         return;
       }
       if (playerAttackRes != 0) {
+        boardPlayer2.removeEventListener("click", handleUserClickPVP);
         setTimeout(() => {
           document.querySelector(".overlay").classList.remove("hidden");
           setTimeout(() => {

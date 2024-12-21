@@ -50,6 +50,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
     const miss = document.createElement("img");
     miss.src = miss_svg;
     miss.classList.add("hit");
+    miss.draggable=false;
     document
       .querySelectorAll(`.${boardName} .cell`)
       [x * 10 + y].appendChild(miss);
@@ -66,6 +67,7 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
         enemyShip.style.width = `calc(var(--cell-size)*${length})`;
         enemyShip.style.animation = "fadeIn 0.5s forwards";
         enemyShip.style.opacity = "0.3";
+        enemyShip.draggable=false;
         if (shipName == "submarine")
           enemyShip.style.height = `var(--cell-size)*0.8`;
         if (orientation) {
@@ -92,7 +94,6 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
             document.querySelectorAll(".player1 .cell")[
               startCoords[0] * 10 + startCoords[1]
             ];
-        console.log(shipCell);
         shipCell.querySelector(".shipimg").style.animation =
           "fadeOut 0.5s forwards";
       }
@@ -100,18 +101,20 @@ function recordHitUI([x, y], attackResult, perspective, ship) {
     const hit = document.createElement("img");
     hit.src = hit_svg;
     hit.classList.add("hit");
+    hit.draggable=false;
     document
       .querySelectorAll(`.${boardName} .cell`)
       [x * 10 + y].appendChild(hit);
   }
 }
 
-function renderMap(name, perspective, shipFleet, board) {
+function renderMap(perspective, shipFleet, board) {
   function appendShip(ship, sunk, boardName) {
     const shipImg = document.createElement("img");
     shipImg.src = shipsvg;
     shipImg.classList.add("shipimg");
     shipImg.style.width = `calc(var(--cell-size)*${length})`;
+    shipImg.draggable=false;
     if (sunk) shipImg.style.animation = "fadeOut 0.5s forwards";
     if (ship.orientation) {
       shipImg.style.transform = "rotate(270deg)";
@@ -163,6 +166,7 @@ function renderMap(name, perspective, shipFleet, board) {
           const hit = document.createElement("img");
           hit.src = hit_svg;
           hit.classList.add("hit");
+          hit.draggable=false;
           document
             .querySelectorAll(`.${boardName} .cell`)
             [x * 10 + y].appendChild(hit);
@@ -170,6 +174,7 @@ function renderMap(name, perspective, shipFleet, board) {
           const miss = document.createElement("img");
           miss.src = miss_svg;
           miss.classList.add("hit");
+          miss.draggable=false;
           document
             .querySelectorAll(`.${boardName} .cell`)
             [x * 10 + y].appendChild(miss);
