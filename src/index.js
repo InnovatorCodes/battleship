@@ -169,7 +169,7 @@ function displayInstructions() {
   title1.textContent = "Setting Up";
   const text1 = document.createElement("div");
   text1.innerText =
-    "1. Each player has a fleet of ships of various lengths to place on their grid." +
+    "1. Each player has a fleet of 5 ships of various lengths to place on their grid." +
     "\n2. Ships can be placed either horizontally or vertically." +
     "\n3. Players take turns placing their ships in hidden positions, ensuring they do not overlap.";
   settingup.append(title1, text1);
