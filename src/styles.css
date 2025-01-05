@@ -327,10 +327,6 @@ dialog.instructions[open] {
   transition: all 0.2s ease-in-out;
 }
 
-.shipdiv.dragging {
-  transform: scale(0.95);
-}
-
 .fleet .shipimg {
   height: var(--cell-size);
   user-select: none;
@@ -679,4 +675,84 @@ dialog .restart:hover {
   background-color: white;
   color: black;
   cursor: pointer;
+}
+
+@media (max-width:590px){
+  body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  html{
+    height: 100vh;
+  }
+
+  .maindiv{
+    height: max-content;
+  }
+  :root{
+    --cell-size: 7vw;
+  }
+  .player.setup{
+    grid-template-columns: auto;
+    grid-template-rows: auto auto auto auto 1fr;
+    gap: 1rem;
+    max-width: 95vw;
+    padding: 2vh 1vh;
+  }
+
+  .setup .fleet {
+    grid-row: 4 / span 1;
+    grid-column: 1 / span 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    width: 75vw;
+    place-self: center;
+  }
+
+  .shipdiv {
+    width: calc(var(--cell-size)*5);
+  }
+
+  .fleet .shipimg{
+    height: calc(var(--cell-size)*0.7);
+  }
+
+  .setup .buttons{
+    grid-row: 5 / span 1;
+    justify-content: center;
+    width: max-content;
+    place-self: center;
+  }
+
+  .setup .boardInfo{
+    place-content: center;
+    max-width: max-content;
+    place-self: center;
+  }
+  .orientation{
+    width: calc(var(--cell-size)*5);
+    gap: 2vw;
+  }
+
+  .playername, .title{
+    width: max-content;
+  }
+
+  .battlePage .boards{
+    flex-direction:column-reverse;
+    gap: 2rem;
+  }
+  .setup .buttons>*, .shipdiv, .orientation{
+    font-size: 3vw;
+  }
+
+  .setup .buttons img, .orientation>img{
+    width: 7vw;
+  }
 }
