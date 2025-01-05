@@ -137,7 +137,7 @@ function startGame(
         [parseInt(x), parseInt(y)],
         "enemy",
       );
-      attackres.textContent = "IT'S THE COMPUTER'S TURN";
+      attackres.innerText = "PLEASE WAIT...\nIT'S THE COMPUTER'S TURN";
       if (userAttackRes == 2)
         attackres.textContent = `COMMANDER ${player1.name.toUpperCase()}, ${5 - player2.shipsLeft()} SHIP${5 - player2.shipsLeft() > 1 ? "S" : ""} DOWN. ${player2.shipsLeft()} TO GO`;
       boardPlayer2.removeEventListener("click", handleUserClickAI);

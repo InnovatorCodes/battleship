@@ -31,7 +31,7 @@ img {
 }
 
 body {
-  height: 100vh;
+  min-height: 100%;
   width: 100vw;
   background-image: url("./assets/battleship.jpg");
   background-size: cover;
@@ -682,16 +682,18 @@ dialog .restart:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    min-height: 100vh;
     width: 100%;
+    margin: 0;
+    background-position: center;
   }
 
   html{
-    height: 100vh;
+    min-height: 100%;
   }
 
   .maindiv{
-    height: max-content;
+    height: 100%;
   }
   :root{
     --cell-size: 7vw;
@@ -735,6 +737,11 @@ dialog .restart:hover {
     max-width: max-content;
     place-self: center;
   }
+
+  .setup .title{
+    font-size: 6vw;
+  }
+
   .orientation{
     width: calc(var(--cell-size)*5);
     gap: 2vw;
@@ -744,9 +751,14 @@ dialog .restart:hover {
     width: max-content;
   }
 
+  .battlePage{
+    gap: 1vh;
+  }
+
   .battlePage .boards{
-    flex-direction:column-reverse;
-    gap: 2rem;
+    flex-direction:column;
+    gap: 1vh;
+
   }
   .setup .buttons>*, .shipdiv, .orientation{
     font-size: 3vw;
@@ -754,5 +766,57 @@ dialog .restart:hover {
 
   .setup .buttons img, .orientation>img{
     width: 7vw;
+  }
+
+  .player{
+    max-width: min-content;
+    padding: 4vw;
+  }
+
+  .attackres{
+    font-size: 4vw;
+    text-align: center;
+  }
+  .boards .title{
+    flex-direction: column;
+    align-items: start;
+    font-size: 2.5vw;
+  }
+
+  dialog .maintext{
+    font-size: 8vw;
+    text-align: center;
+  }
+
+  dialog .subtext{
+    font-size: 6vw;
+  }
+
+  dialog .restart{
+    font-size: 4vw;
+  }
+
+  .header{
+    display: flex;
+    align-items: end;
+    font-size: 15vw;
+  }
+
+  .gamemode .infotext{
+    text-align: center;
+  }
+
+  .gamechoice{
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .playernames{
+    padding: 3vw 3vw;
+    font-size: 6vw;
+  }
+
+  .playernames input, .confirmname{
+    font-size: 5vw;
   }
 }

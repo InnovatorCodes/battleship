@@ -100,7 +100,7 @@ function gameMode(selectCallback) {
   aimaintext.textContent = "Single Player Mode";
   const aisubtext = document.createElement("div");
   aisubtext.classList.add("subtext");
-  aisubtext.textContent = "User vs Computer";
+  aisubtext.textContent = "User vs. Computer";
   ai.append(aimaintext, aisubtext);
   ai.addEventListener("click", () => {
     selectCallback("ai");
