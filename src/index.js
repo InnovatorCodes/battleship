@@ -168,21 +168,23 @@ function displayInstructions() {
   const title1 = document.createElement("h2");
   title1.textContent = "Setting Up";
   const text1 = document.createElement("div");
+  let nextline =
+    "ontouchstart" in window || navigator.maxTouchPoints > 0 ? "\n\n" : "\n";
   text1.innerText =
-    "1. Each player has a fleet of 5 ships of various lengths to place on their grid." +
-    "\n\n2. Ships can be placed either horizontally or vertically." +
-    "\n\n3. Players take turns placing their ships in hidden positions, ensuring they do not overlap." +
-    "\n\n4. If you are playing on a laptop, drag and drop to place your ship. If you are playing on a phone, select the ship and then the coordinates to place the selected ship";
+    `1. Each player has a fleet of 5 ships of various lengths to place on their grid.` +
+    `${nextline}2. Ships can be placed either horizontally or vertically.` +
+    `${nextline}3. Players take turns placing their ships in hidden positions, ensuring they do not overlap.` +
+    `${nextline}4. If you are playing on a laptop, drag and drop to place your ship. If you are playing on a phone, select the ship and then the coordinates to place the selected ship`;
   settingup.append(title1, text1);
   const gameplay = document.createElement("div");
   const title2 = document.createElement("h2");
   title2.textContent = "Gameplay";
   const text2 = document.createElement("div");
   text2.innerText =
-    "1. On your turn, select a coordinate on your opponent's grid to fire a shot." +
-    "\n\n2. A Red Circle indicates a Hit and a White Circle indicates a Miss." +
-    "\n\n3. If you hit a ship, keep firing to sink it!" +
-    "\n\n4. A sunk Enemy Ship will be revealed on the Enemy's Map";
+    `1. On your turn, select a coordinate on your opponent's grid to fire a shot.` +
+    `${nextline}2. A Red Circle indicates a Hit and a White Circle indicates a Miss.` +
+    `${nextline}3. If you hit a ship, keep firing to sink it!` +
+    `${nextline}4. A sunk Enemy Ship will be revealed on the Enemy's Map`;
   gameplay.append(title2, text2);
   const winning = document.createElement("div");
   const title3 = document.createElement("h2");
