@@ -29,8 +29,14 @@ let orientation = 0,
   length;
 let shipsvg;
 let currentDragCells = [];
+let selectedShip = null;
 let appendedShips = [];
 let shipsPlacement = [];
+const viewportWidth = document.documentElement.clientWidth;
+const viewportHeight = document.documentElement.clientHeight;
+
+const gridSize = 10; // Adjust this to match your grid size
+const cellIndex = (row, col) => row * gridSize + col;
 
 function clearHighlightCells() {
   currentDragCells.forEach((cell) => {
@@ -110,64 +116,136 @@ function fleetSetup(name, callback) {
   scanner.classList.add("scanner");
   radar.appendChild(scanner);
   boardDiv.appendChild(radar);
+  function decidingCell(event) {
+    if (event.type.startsWith("drag")) {
+      const dragTarget = event.target;
+      if (dragTarget.classList.contains("cell")) {
+        const [x, y] = dragTarget.dataset.pos.split(" ").map(Number);
+        addHighlightCells(x, y, length, orientation); // Highlight the appropriate cells
+      }
+    } else {
+      const touch = event.touches[0]; // Get the first touch point
+      const dragTarget = document.elementFromPoint(touch.pageX, touch.pageY);
+      if (
+        touch.pageX >= 0 &&
+        touch.pageX <= viewportWidth &&
+        touch.pageY >= 0 &&
+        touch.pageY <= viewportHeight &&
+        !!dragTarget &&
+        dragTarget.classList.contains("cell") &&
+        selectedShip != null
+      ) {
+        const [x, y] = dragTarget.dataset.pos.split(" ").map(Number);
+        addHighlightCells(x, y, length, orientation); // Highlight the appropriate cells
+      }
+    }
+  }
+  function decidedCell(event) {
+    let targetCell;
+    const touchEvent = event.type.startsWith("touch");
+    if (touchEvent) {
+      const touch = event.changedTouches[0]; // Get the first touch point
+      if (
+        touch.pageX < 0 ||
+        touch.pageX > viewportWidth ||
+        touch.pageY < 0 ||
+        touch.pageY > viewportHeight ||
+        selectedShip == null
+      ) {
+        clearHighlightCells();
+        return;
+      }
+      targetCell = document.elementFromPoint(touch.pageX, touch.pageY);
+    } else {
+      targetCell = event.target;
+    }
+    if (targetCell.classList.contains("cell")) {
+      let startCoords = targetCell.dataset.pos.split(" ").map(Number);
+      let name;
+      if (!touchEvent) name = event.dataTransfer.getData("text");
+      else name = selectedShip.toLowerCase();
+      if (
+        !targetCell.classList.contains("invalid") ||
+        targetCell.dataset.ship != "null"
+      ) {
+        let valid = true;
+        if (orientation) {
+          for (let i = 0; i < length; i++) {
+            if (
+              document
+                .querySelectorAll(".cell")
+                [
+                  cellIndex(startCoords[0] + i, startCoords[1])
+                ].classList.contains("invalid") ||
+              document.querySelectorAll(".cell")[
+                cellIndex(startCoords[0] + i, startCoords[1])
+              ].dataset.ship !== "null"
+            ) {
+              valid = false;
+              console.log("invalid");
+              break;
+            } else
+              console.log(
+                `${startCoords}, ${document.querySelectorAll(".cell")[cellIndex(startCoords[0] + i, startCoords[1])].dataset.ship}`,
+              );
+          }
+        } else {
+          console.log("hi");
+          for (let i = 0; i < length; i++) {
+            if (
+              document
+                .querySelectorAll(".cell")
+                [
+                  cellIndex(startCoords[0], startCoords[1] + i)
+                ].classList.contains("invalid") ||
+              document.querySelectorAll(".cell")[
+                cellIndex(startCoords[0], startCoords[1] + i)
+              ].dataset.ship != "null"
+            ) {
+              valid = false;
+              console.log("invalid");
+              break;
+            } else
+              console.log(
+                `${startCoords}, ${document.querySelectorAll(".cell")[(startCoords[0] + i) * 10 + startCoords[1]].dataset.ship}`,
+              );
+          }
+        }
+        if (valid) {
+          placeShipUI(
+            name,
+            startCoords,
+            orientation,
+            !event.type.startsWith("touch"),
+          );
+          shipsPlacement.push([name, startCoords, orientation]);
+        }
+      } else {
+        console.log(targetCell.dataset.ship);
+      }
+    }
+    clearHighlightCells();
+  }
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
       cell.dataset.pos = `${i} ${j}`;
       cell.dataset.ship = null;
-      cell.addEventListener("dragover", (event) => {
-        event.preventDefault();
-      });
-      cell.addEventListener("dragenter", (event) => {
-        const dragTarget = event.target;
-        if (dragTarget.classList.contains("cell")) {
-          const [x, y] = dragTarget.dataset.pos.split(" ").map(Number);
-          addHighlightCells(x, y, length, orientation); // Highlight the appropriate cells
-        }
-      });
-      cell.addEventListener("drop", (event) => {
-        const targetCell = event.target;
-        if (targetCell.classList.contains("cell")) {
-          let startCoords = targetCell.dataset.pos.split(" ").map(Number);
-          let name = event.dataTransfer.getData("text");
-          if (!targetCell.classList.contains("invalid")) {
-            let valid = true;
-            if (orientation) {
-              for (let i = 0; i < length; i++) {
-                if (
-                  document
-                    .querySelectorAll(".cell")
-                    [
-                      (startCoords[0] + i) * 10 + startCoords[1]
-                    ].classList.contains("invalid")
-                ) {
-                  valid = false;
-                  break;
-                }
-              }
-            } else {
-              for (let i = 0; i < length; i++) {
-                if (
-                  document
-                    .querySelectorAll(".cell")
-                    [
-                      startCoords[0] * 10 + startCoords[1] + i
-                    ].classList.contains("invalid")
-                ) {
-                  valid = false;
-                  break;
-                }
-              }
-            }
-            if (valid) {
-              placeShipUI(name, startCoords, orientation);
-              shipsPlacement.push([name, startCoords, orientation]);
-            }
-          }
-        }
-        clearHighlightCells();
-      });
+      const isTouchDevice =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      if (!isTouchDevice) {
+        cell.addEventListener("dragover", (event) => {
+          event.preventDefault();
+        });
+        cell.addEventListener("dragenter", decidingCell);
+        cell.addEventListener("drop", decidedCell);
+      } else {
+        cell.addEventListener("touchstart", decidingCell);
+        cell.addEventListener("touchmove", decidingCell);
+        cell.addEventListener("touchend", decidedCell);
+      }
+
       boardDiv.appendChild(cell);
     }
   }
@@ -249,7 +327,7 @@ function fleetSetup(name, callback) {
       else
         for (let i = 0; i < length; i++)
           boardDiv.querySelectorAll(".cell")[
-            startCoords[0] * 10 + startCoords[1] + i
+            cellIndex(startCoords[0], startCoords[1] + i)
           ].dataset.ship = null;
     });
     shipsPlacement = [];
@@ -258,6 +336,7 @@ function fleetSetup(name, callback) {
     newFleet.classList.add("fleet");
     playerDiv.removeChild(oldFleet);
     playerDiv.insertBefore(newFleet, buttons);
+    orientation = 0;
   }
 
   resetbtn.addEventListener("click", () => {
@@ -318,6 +397,7 @@ function fleetSetup(name, callback) {
       }
       placeShipUI(name, [x, y], orientation);
       shipsPlacement.push([name, [x, y], orientation]);
+      selectedShip = null;
     }
   }
 
@@ -331,7 +411,7 @@ function fleetSetup(name, callback) {
   return playerDiv;
 }
 
-function placeShipUI(name, startCoords, orientation) {
+function placeShipUI(name, startCoords, orientation, dragEvent) {
   setShipInfo(name);
   const boardDiv = document.querySelector(`.board`);
   const shipImg = document.createElement("img");
@@ -344,6 +424,7 @@ function placeShipUI(name, startCoords, orientation) {
   if (orientation) {
     shipImg.style.transform = "rotate(270deg)";
     shipImg.style.transformOrigin = `${(1 / (2 * length)) * 100}% 50%`;
+    if ((startCoords[0] + length - 1) * 10 + startCoords[1] > 99) return;
     boardDiv
       .querySelectorAll(".cell")
       [
@@ -367,15 +448,20 @@ function placeShipUI(name, startCoords, orientation) {
     );
     for (let i = 0; i < length; i++)
       boardDiv.querySelectorAll(".cell")[
-        startCoords[0] * 10 + startCoords[1] + i
+        cellIndex(startCoords[0], startCoords[1] + i)
       ].dataset.ship = name;
   }
   let draggableElementIndex = shipNames.indexOf(name.toUpperCase());
   const draggableElement =
     document.querySelectorAll(".shipdiv")[draggableElementIndex];
   const rect = draggableElement.getBoundingClientRect();
-  draggableElement.style.width = `${rect.width}px`;
   draggableElement.style.height = `${rect.height}px`;
+  if (!dragEvent) {
+    draggableElement.style.height = `${rect.height / 1.05}`;
+    draggableElement.style.width = `${rect.width / 1.05}`;
+    draggableElement.classList.remove("selected");
+  }
+  if (dragEvent) draggableElement.style.width = `${rect.width}px`;
   while (draggableElement.hasChildNodes())
     draggableElement.removeChild(draggableElement.firstChild);
   draggableElement.draggable = false;
@@ -446,31 +532,43 @@ function createFleetUI() {
     shipDiv.dataset.name = shipNames[i].toLowerCase();
     shipDiv.dataset.length = shipLengths[i];
     fleet.appendChild(shipDiv);
-    shipDiv.addEventListener("dragstart", (event) => {
-      const draggableElement = event.target;
-      const rect = draggableElement.getBoundingClientRect();
-      const dragImage = draggableElement.cloneNode(true);
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (!isTouchDevice) {
+      shipDiv.addEventListener("dragstart", (event) => {
+        const draggableElement = event.target;
+        const rect = draggableElement.getBoundingClientRect();
+        const dragImage = draggableElement.cloneNode(true);
 
-      // Apply the same styles to the drag image
-      dragImage.style.position = "absolute";
-      //dragImage.style.top = '-9999px'; // Hide it offscreen
-      dragImage.style.opacity = 0.001;
-      dragImage.style.width = `${rect.width}px`;
-      dragImage.style.border = "2px solid white";
-      dragImage.style.outline = "none";
-      document.querySelector(".fleet").appendChild(dragImage);
+        // Apply the same styles to the drag image
+        dragImage.style.position = "absolute";
+        //dragImage.style.top = '-9999px'; // Hide it offscreen
+        dragImage.style.opacity = 0.001;
+        dragImage.style.width = `${rect.width}px`;
+        dragImage.style.border = "2px solid white";
+        dragImage.style.outline = "none";
+        document.querySelector(".fleet").appendChild(dragImage);
 
-      // Set the custom drag image
-      event.dataTransfer.setDragImage(dragImage, 0.8 * rect.width, 50); // Offset for the cursor position
-      event.dataTransfer.setData("text", draggableElement.dataset.name);
+        // Set the custom drag image
+        event.dataTransfer.setDragImage(dragImage, 0.8 * rect.width, 50); // Offset for the cursor position
+        event.dataTransfer.setData("text", draggableElement.dataset.name);
 
-      length = parseInt(draggableElement.dataset.length);
+        length = parseInt(draggableElement.dataset.length);
 
-      // Clean up after the drag ends
-      draggableElement.addEventListener("dragend", () => {
-        dragImage.remove();
+        // Clean up after the drag ends
+        draggableElement.addEventListener("dragend", () => {
+          dragImage.remove();
+        });
       });
-    });
+    } else {
+      shipDiv.addEventListener("touchend", (event) => {
+        if (shipDiv.hasChildNodes()) {
+          shipDiv.classList.add("selected");
+          selectedShip = shipDiv.childNodes[1].textContent;
+          length = parseInt(event.target.dataset.length);
+        }
+      });
+    }
   }
   return fleet;
 }

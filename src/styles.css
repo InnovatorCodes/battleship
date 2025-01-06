@@ -28,6 +28,8 @@ img {
   -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  -webkit-tap-highlight-color: transparent; /* Disable blue highlight on tap */
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -35,6 +37,10 @@ body {
   width: 100vw;
   background-image: url("./assets/battleship.jpg");
   background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .header {
@@ -677,28 +683,24 @@ dialog .restart:hover {
   cursor: pointer;
 }
 
-@media (max-width:590px){
-  body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+@media (max-width: 590px) {
+  body {
     width: 100%;
     margin: 0;
     background-position: center;
   }
 
-  html{
+  html {
     min-height: 100%;
   }
 
-  .maindiv{
+  .maindiv {
     height: 100%;
   }
-  :root{
+  :root {
     --cell-size: 7vw;
   }
-  .player.setup{
+  .player.setup {
     grid-template-columns: auto;
     grid-template-rows: auto auto auto auto 1fr;
     gap: 1rem;
@@ -718,105 +720,122 @@ dialog .restart:hover {
   }
 
   .shipdiv {
-    width: calc(var(--cell-size)*5);
+    width: calc(var(--cell-size) * 5);
+    transform: scale(1);
+    transition: transform 0.3s ease-in-out;
   }
 
-  .fleet .shipimg{
-    height: calc(var(--cell-size)*0.7);
+  .fleet .shipimg {
+    height: calc(var(--cell-size) * 0.7);
   }
 
-  .setup .buttons{
+  .setup .buttons {
     grid-row: 5 / span 1;
     justify-content: center;
     width: max-content;
     place-self: center;
   }
 
-  .setup .boardInfo{
+  .setup .boardInfo {
     place-content: center;
     max-width: max-content;
     place-self: center;
   }
 
-  .setup .title{
+  .setup .title {
     font-size: 6vw;
   }
 
-  .orientation{
-    width: calc(var(--cell-size)*5);
+  .orientation {
+    width: calc(var(--cell-size) * 5);
     gap: 2vw;
   }
 
-  .playername, .title{
+  .playername,
+  .title {
     width: max-content;
   }
 
-  .battlePage{
+  .battlePage {
     gap: 1vh;
   }
 
-  .battlePage .boards{
-    flex-direction:column;
+  .battlePage .boards {
+    flex-direction: column;
     gap: 1vh;
-
   }
-  .setup .buttons>*, .shipdiv, .orientation{
+  .setup .buttons > *,
+  .shipdiv,
+  .orientation {
     font-size: 3vw;
   }
 
-  .setup .buttons img, .orientation>img{
+  .setup .buttons img,
+  .orientation > img {
     width: 7vw;
   }
 
-  .player{
+  .player {
     max-width: min-content;
     padding: 4vw;
   }
 
-  .attackres{
+  .attackres {
     font-size: 4vw;
     text-align: center;
   }
-  .boards .title{
+  .boards .title {
     flex-direction: column;
     align-items: start;
     font-size: 2.5vw;
   }
 
-  dialog .maintext{
+  dialog .maintext {
     font-size: 8vw;
     text-align: center;
   }
 
-  dialog .subtext{
+  dialog .subtext {
     font-size: 6vw;
   }
 
-  dialog .restart{
+  dialog .restart {
     font-size: 4vw;
   }
 
-  .header{
+  .header {
     display: flex;
     align-items: end;
     font-size: 15vw;
   }
 
-  .gamemode .infotext{
+  .gamemode .infotext {
     text-align: center;
   }
 
-  .gamechoice{
+  .gamechoice {
     flex-direction: column;
     text-align: center;
   }
 
-  .playernames{
+  .playernames {
     padding: 3vw 3vw;
     font-size: 6vw;
   }
 
-  .playernames input, .confirmname{
+  .playernames input,
+  .confirmname {
     font-size: 5vw;
+  }
+
+  .confirm:hover,
+  .reset:hover,
+  .randomize:hover {
+    cursor: pointer;
+    transform: none;
+  }
+
+  .shipdiv.selected {
+    transform: scale(1.05);
   }
 }
