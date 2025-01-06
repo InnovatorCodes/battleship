@@ -32,6 +32,11 @@ img {
   -webkit-touch-callout: none;
 }
 
+div:not(.cell) {
+  -webkit-tap-highlight-color: transparent; /* Disable blue highlight on tap */
+  -webkit-touch-callout: none;
+}
+
 body {
   min-height: 100%;
   width: 100vw;
@@ -213,9 +218,13 @@ dialog.instructions[open] {
 }
 
 .attackres {
+  font-size: 4vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   background-color: rgb(27, 27, 27);
   align-self: stretch;
-  display: flex;
   justify-content: center;
   font-family: "aquire", sans-serif;
   font-size: 1.5rem;
@@ -684,6 +693,13 @@ dialog .restart:hover {
 }
 
 @media (max-width: 590px) {
+  dialog.instructions[open] {
+    width: 90%;
+  }
+
+  dialog.instructions br {
+    margin-top: 5rem;
+  }
   body {
     width: 100%;
     margin: 0;
@@ -761,7 +777,7 @@ dialog .restart:hover {
   }
 
   .battlePage .boards {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 1vh;
   }
   .setup .buttons > *,
@@ -780,10 +796,6 @@ dialog .restart:hover {
     padding: 4vw;
   }
 
-  .attackres {
-    font-size: 4vw;
-    text-align: center;
-  }
   .boards .title {
     flex-direction: column;
     align-items: start;
